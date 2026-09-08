@@ -385,7 +385,7 @@
                 // 현재 승자 수 확인 (최대 2명 제한)
                 const currentWinners = state.players.filter((_, idx) => state.scores[h][idx] > 0).length;
                 if (currentWinners >= 2) {
-                    alert("승자는 한 홀에 최대 2명까지만 선택할 수 있습니다.");
+                    alert("A Maximum of two winners can be selected for each hole");
                     return;
                 }
                 state.scores[h][pIdx] = mult;
