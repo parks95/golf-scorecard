@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Golf Betting Scorecard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; touch-action: manipulation; }
+        .no-select { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+        
+        /* Custom scrollbar for matrix table */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col no-select selection:bg-emerald-500 selection:text-slate-950">
+
+    <div id="app" class="max-w-md mx-auto w-full min-h-screen flex flex-col bg-slate-900 shadow-2xl relative pb-6 border-x border-slate-800">
+
+        <!-- HEADER -->
+        <header class="p-4 bg-slate-900/90 backdrop-blur border-b border-slate-800 flex justify-between items-center sticky top-0 z-20">
+            <div class="flex items-center space-x-2.5">
+                <span class="text-2xl">⛳</span>
+                <div>
+                    <h1 class="font-extrabold text-base leading-tight text-emerald-400" id="headerGameTitle">Skins Game</h1>
+                    <p class="text-[11px] text-slate-400 font-medium" id="headerSub">Golf Betting Scorecard</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="btnOpenSheet" onclick="openScoreSheetModal()" class="hidden text-xs bg-slate-800 hover:bg-slate-700 text-emerald-400 px-2.5 py-1.5 rounded-lg border border-slate-700 font-semibold flex items-center gap-1 transition">
+                    <span>📊</span> Score Sheet
+                </button>
+                <button id="btnReset" onclick="confirmReset()" class="hidden text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg border border-slate-700 font-semibold transition">
+                    New
+                </button>
+            </div>
+        </header>
+
+        <!-- ========================================== -->
+        <!-- SCREEN 1: SETUP SCREEN                     -->
+        <!-- ========================================== -->
+        <section id="setupScreen" class="p-5 flex-1 flex flex-col justify-between space-y-6">
+            <div class="space-y-5">
+                <!-- Game Title -->
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-emerald-400">Game Name / Title</label>
+                    <input type="text" id="gameTitleInput" value="Weekend Golf Betting" placeholder="e.g. 주말 명랑 내기" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 font-medium text-sm">
+                </div>
+
+                <!-- Players (Default 4) -->
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-emerald-400">Players (2 ~ 4)</label>
+                        <span id="playerCountLabel" class="text-xs text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">4 Players</span>
+                    </div>
+                    <div id="playerInputs" class="space-y-2">
+                        <!-- Dynamic Player Inputs -->
+                    </div>
+                    <button id="btnAddPlayer" onclick="addPlayerInput()" class="mt-2 w-full py-2 bg-slate-900 border border-dashed border-slate-700 rounded-xl text-slate-400 hover:text-white hover:border-slate-500 text-xs font-bold transition flex items-center justify-center gap-1">
+                        <span>+</span> Add Player
+                    </button>
+                </div>
+
+                <!-- Base Double Holes -->
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2.5">
+                    <div class="flex justify-between items-center">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-amber-400">🔥 Base Double Holes (2x)</label>
+                        <span class="text-[10px] text-slate-400">Default: 9, 17, 18</span>
+                    </div>
+                    <div class="grid grid-cols-6 gap-1.5" id="doubleHolesGrid">
+                        <!-- 1-18 Checkboxes -->
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black py-4 rounded-2xl shadow-lg shadow-emerald-500/20 text-base transition transform active:scale-[0.98]">
+                Start Betting Game 🏌️‍♂️
+            </button>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SCREEN 2: IN-GAME PLAY SCREEN              -->
+        <!-- ========================================== -->
+        <section id="gameScreen" class="hidden flex-1 flex flex-col p-4 space-y-4">
+            
+            <!-- Hole Navigator Header -->
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 text-center relative overflow-hidden shadow-xl">
+                <div class="flex justify-between items-center text-xs font-bold mb-2">
+                    <button id="btnPrevHole" onclick="changeHole(-1)" class="px-3 py-1.5 bg-slate-900 rounded-xl border border-slate-800 hover:text-white disabled:opacity-30">❮ Prev</button>
+                    <span id="holeDisplay" class="text-emerald-400 text-base font-extrabold tracking-wider">HOLE 1 / 18</span>
+                    <button id="btnNextHole" onclick="changeHole(1)" class="px-3 py-1.5 bg-slate-900 rounded-xl border border-slate-800 hover:text-white disabled:opacity-30">Next ❯</button>
+                </div>
+
+                <!-- Multiplier Banner -->
+                <div id="multiplierBanner" class="py-2.5 px-4 rounded-xl font-extrabold text-sm flex items-center justify-center gap-2 transition-all">
+                    <!-- Dynamic Multiplier Text -->
+                </div>
+                <p id="multiplierReason" class="text-[11px] text-slate-400 mt-1.5 font-medium"></p>
+            </div>
+
+            <!-- Quick Win Selection & Manual Override Section -->
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 flex-1 flex flex-col justify-between space-y-3 shadow-xl">
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <div>
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Hole Outcome</span>
+                            <span class="text-[10px] text-slate-500">Tap 🏆 WINNER for auto-points, or use +/- for custom</span>
+                        </div>
+                        <button onclick="setTieHole()" class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-xl font-bold hover:bg-amber-500/20 transition flex items-center gap-1">
+                            🤝 Draw (Tie)
+                        </button>
+                    </div>
+
+                    <!-- Player Rows with Auto WIN & Manual +/- -->
+                    <div id="holeScoreInputs" class="space-y-2.5">
+                        <!-- Dynamic Player Cards -->
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-800/80 flex gap-2">
+                    <button onclick="resetCurrentHoleScores()" class="w-1/3 bg-slate-900 hover:bg-slate-800 text-slate-400 font-bold py-3.5 rounded-xl border border-slate-800 text-xs transition">
+                        Reset Hole
+                    </button>
+                    <button onclick="changeHole(1)" class="w-2/3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black py-3.5 rounded-xl shadow-lg text-sm transition flex items-center justify-center gap-1.5">
+                        Next Hole ➔
+                    </button>
+                </div>
+            </div>
+
+            <!-- Live Mini Standings Card -->
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 shadow-inner">
+                <div class="flex justify-between items-center mb-2.5">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                        <span>📊 Live Totals</span>
+                    </h3>
+                    <span id="completedHolesCount" class="text-[11px] font-bold text-slate-400">0 / 18 Holes</span>
+                </div>
+                <div id="liveTotalsList" class="grid grid-cols-2 gap-2">
+                    <!-- Dynamic Live Score Items -->
+                </div>
+            </div>
+
+            <button onclick="showResults()" class="w-full py-3 text-xs font-bold text-slate-400 hover:text-white bg-slate-950 border border-slate-800 rounded-xl transition">
+                End Game & Show Final Leaderboard 🏆
+            </button>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SCREEN 3: FINAL RESULT SCREEN              -->
+        <!-- ========================================== -->
+        <section id="resultScreen" class="hidden p-5 flex-1 flex flex-col space-y-5">
+            <div class="text-center space-y-1">
+                <div class="text-4xl">🏆</div>
+                <h2 class="text-2xl font-black text-white" id="resultGameTitle">Final Standings</h2>
+                <p class="text-xs text-slate-400">Game Over · Final Settlement</p>
+            </div>
+
+            <!-- Final Leaderboard Cards -->
+            <div id="finalLeaderboard" class="space-y-2.5">
+                <!-- Dynamic Leaderboard Items -->
+            </div>
+
+            <!-- Full Match Matrix Table (18 Holes) -->
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-2.5">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-400 flex justify-between items-center">
+                    <span>18-Hole Detailed Score Table</span>
+                    <span class="text-[10px] text-slate-500 font-normal">🔥: Multiplier</span>
+                </h4>
+                
+                <div class="overflow-x-auto no-scrollbar rounded-xl border border-slate-800">
+                    <table class="w-full text-xs text-center">
+                        <thead class="bg-slate-900 text-slate-400 border-b border-slate-800 font-bold">
+                            <tr id="finalMatrixHeader">
+                                <th class="py-2.5 px-2 text-left pl-3">Hole</th>
+                                <th class="py-2.5 px-1">Mult.</th>
+                                <!-- Player Columns Injected -->
+                            </tr>
+                        </thead>
+                        <tbody id="finalMatrixBody" class="divide-y divide-slate-800/60 font-medium">
+                            <!-- Matrix rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Share / Reset Actions -->
+            <div class="space-y-2.5 pt-2">
+                <button onclick="confirmReset()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-3.5 rounded-2xl shadow-lg transition">
+                    Start New Game
+                </button>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL: MID-GAME SCORE SHEET & LEADERBOARD  -->
+    <!-- ========================================== -->
+    <div id="scoreSheetModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-3xl p-5 shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
+            
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <div>
+                    <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+                        <span>📊 Live Score Sheet</span>
+                    </h3>
+                    <p class="text-[11px] text-slate-400">Current progress and 18-hole breakdown</p>
+                </div>
+                <button onclick="closeScoreSheetModal()" class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 text-slate-400 hover:text-white flex items-center justify-center font-bold">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto no-scrollbar space-y-4 pr-0.5">
+                <!-- Current Standings Summary -->
+                <div class="bg-slate-950 rounded-2xl p-3 border border-slate-800 space-y-2">
+                    <span class="text-[11px] font-bold text-emerald-400 uppercase tracking-wider block">Current Leaderboard</span>
+                    <div id="modalStandings" class="grid grid-cols-2 gap-2 text-xs">
+                        <!-- Dynamic standings -->
+                    </div>
+                </div>
+
+                <!-- 18-Hole Matrix Table -->
+                <div class="rounded-xl border border-slate-800 overflow-x-auto no-scrollbar">
+                    <table class="w-full text-xs text-center">
+                        <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 sticky top-0 backdrop-blur font-bold">
+                            <tr id="modalMatrixHeader">
+                                <th class="py-2.5 px-2 text-left pl-3">Hole</th>
+                                <th class="py-2.5 px-1">Mult.</th>
+                                <!-- Dynamic Player Headers -->
+                            </tr>
+                        </thead>
+                        <tbody id="modalMatrixBody" class="divide-y divide-slate-800/60">
+                            <!-- Dynamic Hole Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <button onclick="closeScoreSheetModal()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-2xl transition">
+                Back to Active Hole
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+        // APP STATE
+        let state = {
+            title: "Weekend Golf Betting",
+            players: ["Player 1", "Player 2", "Player 3", "Player 4"],
+            baseDoubleHoles: [17, 18],
+            currentHole: 1,
+            scores: {}, // { holeNum: { playerIndex: netPoints } }
+            ties: {}     // { holeNum: boolean }
+        };
+
+        const DEFAULT_BASE_DOUBLES = [9, 17, 18];
+
+        window.onload = () => {
+            renderSetupPlayers();
+            renderDoubleHolesGrid();
+        };
+
+        // SETUP FUNCTIONS
+        function renderSetupPlayers() {
+            const container = document.getElementById('playerInputs');
+            container.innerHTML = '';
+            
+            state.players.forEach((name, index) => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center gap-2';
+                div.innerHTML = `
+                    <span class="text-xs font-bold text-slate-500 w-4">${index + 1}</span>
+                    <input type="text" value="${name}" onchange="updatePlayerName(${index}, this.value)" placeholder="Enter Name (한글 가능)" 
+                        class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500">
+                    ${state.players.length > 2 ? `
+                        <button onclick="removePlayerInput(${index})" class="text-slate-500 hover:text-rose-400 px-2 py-1 text-sm font-bold">✕</button>
+                    ` : '<span class="w-5"></span>'}
+                `;
+                container.appendChild(div);
+            });
+
+            document.getElementById('playerCountLabel').innerText = `${state.players.length} Players`;
+            document.getElementById('btnAddPlayer').style.display = state.players.length >= 4 ? 'none' : 'flex';
+        }
+
+        function updatePlayerName(index, val) {
+            state.players[index] = val.trim() || `Player ${index + 1}`;
+        }
+
+        function addPlayerInput() {
+            if (state.players.length < 4) {
+                state.players.push(`Player ${state.players.length + 1}`);
+                renderSetupPlayers();
+            }
+        }
+
+        function removePlayerInput(index) {
+            if (state.players.length > 2) {
+                state.players.splice(index, 1);
+                renderSetupPlayers();
+            }
+        }
+
+        function renderDoubleHolesGrid() {
+            const grid = document.getElementById('doubleHolesGrid');
+            grid.innerHTML = '';
+            for (let i = 1; i <= 18; i++) {
+                const checked = DEFAULT_BASE_DOUBLES.includes(i) ? 'checked' : '';
+                grid.innerHTML += `
+                    <label class="cursor-pointer">
+                        <input type="checkbox" value="${i}" ${checked} class="peer hidden double-hole-check">
+                        <div class="w-full py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-center text-xs font-bold text-slate-400 peer-checked:bg-amber-500/20 peer-checked:border-amber-500 peer-checked:text-amber-400 hover:border-slate-700">
+                            ${i}
+                        </div>
+                    </label>
+                `;
+            }
+        }
+
+        function startGame() {
+            state.title = document.getElementById('gameTitleInput').value.trim() || "Weekend Golf Betting";
+            
+            const checks = document.querySelectorAll('.double-hole-check:checked');
+            state.baseDoubleHoles = Array.from(checks).map(c => parseInt(c.value));
+
+            state.scores = {};
+            state.ties = {};
+            for (let h = 1; h <= 18; h++) {
+                state.scores[h] = {};
+                state.players.forEach((_, idx) => state.scores[h][idx] = 0);
+                state.ties[h] = false;
+            }
+
+            state.currentHole = 1;
+
+            // UI Switch
+            document.getElementById('setupScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('btnOpenSheet').classList.remove('hidden');
+            document.getElementById('btnReset').classList.remove('hidden');
+            document.getElementById('headerGameTitle').innerText = state.title;
+
+            renderHole();
+        }
+
+        // MULTIPLIER LOGIC
+        function getHoleMultiplierData(holeNum) {
+            let mult = 1;
+            const isBaseDouble = state.baseDoubleHoles.includes(holeNum);
+            
+            if (isBaseDouble) {
+                mult *= 2;
+            }
+
+            let prevHole = holeNum - 1;
+            let carryoverCount = 0;
+            while (prevHole >= 1 && state.ties[prevHole]) {
+                carryoverCount++;
+                prevHole--;
+            }
+
+            if (carryoverCount > 0) {
+                mult *= Math.pow(2, carryoverCount);
+            }
+
+            let text = `REGULAR HOLE (1x)`;
+            let badgeClass = `bg-slate-800 text-slate-300 border-slate-700`;
+            let reason = `Normal 1x scoring`;
+
+            if (mult >= 2) {
+                if (mult === 2) {
+                    text = `🔥 DOUBLE (2x)`;
+                    badgeClass = `bg-amber-500/20 text-amber-400 border-amber-500/40`;
+                } else if (mult === 4) {
+                    text = `🔥🔥 QUADRUPLE (4x)`;
+                    badgeClass = `bg-rose-500/20 text-rose-400 border-rose-500/40`;
+                } else {
+                    text = `🔥🔥🔥 ${mult}x MULTIPLIER`;
+                    badgeClass = `bg-purple-500/20 text-purple-300 border-purple-500/40`;
+                }
+
+                if (isBaseDouble && carryoverCount > 0) {
+                    reason = `Base Double + ${carryoverCount} tie carryover(s)`;
+                } else if (isBaseDouble) {
+                    reason = `Base designated double hole`;
+                } else {
+                    reason = `${carryoverCount} continuous tie carryover(s)`;
+                }
+            }
+
+            return { mult, text, badgeClass, reason };
+        }
+
+        // HOLE SCORING
+        function renderHole() {
+            const h = state.currentHole;
+            document.getElementById('holeDisplay').innerText = `HOLE ${h} / 18`;
+            
+            document.getElementById('btnPrevHole').disabled = (h === 1);
+
+            const multData = getHoleMultiplierData(h);
+            const banner = document.getElementById('multiplierBanner');
+            banner.className = `py-2.5 px-4 rounded-xl font-extrabold text-sm flex items-center justify-center gap-2 border ${multData.badgeClass}`;
+            banner.innerText = multData.text;
+            document.getElementById('multiplierReason').innerText = multData.reason;
+
+            const container = document.getElementById('holeScoreInputs');
+            container.innerHTML = '';
+
+            state.players.forEach((pName, pIdx) => {
+                const currentScore = state.scores[h][pIdx] || 0;
+                
+                const card = document.createElement('div');
+                card.className = 'flex items-center justify-between bg-slate-900 border border-slate-800 rounded-xl p-2.5';
+                card.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <button onclick="quickWinPlayer(${pIdx})" class="px-2.5 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-xs font-black rounded-lg transition active:scale-95 flex items-center gap-1">
+                            🏆 WIN
+                        </button>
+                        <span class="font-bold text-white text-sm truncate max-w-[100px]">${pName}</span>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <button onclick="adjustScore(${pIdx}, -1)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-base font-bold text-slate-300 hover:bg-slate-700 active:scale-95">-</button>
+                        <span class="w-10 text-center text-base font-black ${currentScore > 0 ? 'text-emerald-400' : currentScore < 0 ? 'text-rose-400' : 'text-slate-400'}">
+                            ${currentScore > 0 ? '+' + currentScore : currentScore}
+                        </span>
+                        <button onclick="adjustScore(${pIdx}, 1)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-base font-bold text-slate-300 hover:bg-slate-700 active:scale-95">+</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            renderLiveTotals();
+        }
+
+        // AUTO WIN BUTTON ACTION
+        function quickWinPlayer(winnerIdx) {
+            const h = state.currentHole;
+            const multData = getHoleMultiplierData(h);
+            const numPlayers = state.players.length;
+            
+            const winPoints = (numPlayers - 1) * multData.mult;
+            const losePoints = -1 * multData.mult;
+
+            state.players.forEach((_, pIdx) => {
+                state.scores[h][pIdx] = (pIdx === winnerIdx) ? winPoints : losePoints;
+            });
+
+            state.ties[h] = false;
+            renderHole();
+        }
+
+        function adjustScore(pIdx, delta) {
+            const h = state.currentHole;
+            state.scores[h][pIdx] += delta;
+            state.ties[h] = false;
+            renderHole();
+        }
+
+        function setTieHole() {
+            const h = state.currentHole;
+            state.players.forEach((_, pIdx) => {
+                state.scores[h][pIdx] = 0;
+            });
+            state.ties[h] = true;
+            renderHole();
+        }
+
+        function resetCurrentHoleScores() {
+            const h = state.currentHole;
+            state.players.forEach((_, pIdx) => {
+                state.scores[h][pIdx] = 0;
+            });
+            state.ties[h] = false;
+            renderHole();
+        }
+
+        function changeHole(dir) {
+            const next = state.currentHole + dir;
+            if (next >= 1 && next <= 18) {
+                state.currentHole = next;
+                renderHole();
+            } else if (next > 18) {
+                showResults();
+            }
+        }
+
+        // STANDINGS & TOTALS
+        function calculateTotals() {
+            const totals = state.players.map(() => 0);
+            let playedCount = 0;
+
+            for (let h = 1; h <= 18; h++) {
+                let holeHasScore = false;
+                
+                state.players.forEach((_, pIdx) => {
+                    const pts = state.scores[h][pIdx] || 0;
+                    if (pts !== 0) holeHasScore = true;
+                    totals[pIdx] += pts;
+                });
+
+                if (holeHasScore || state.ties[h]) playedCount++;
+            }
+
+            return { totals, playedCount };
+        }
+
+        function renderLiveTotals() {
+            const { totals, playedCount } = calculateTotals();
+            document.getElementById('completedHolesCount').innerText = `${playedCount} / 18 Holes`;
+
+            const container = document.getElementById('liveTotalsList');
+            container.innerHTML = '';
+
+            state.players.forEach((pName, pIdx) => {
+                const tot = totals[pIdx];
+                container.innerHTML += `
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-2.5 flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-300 truncate max-w-[80px]">${pName}</span>
+                        <div class="text-right">
+                            <span class="text-xs font-black block ${tot > 0 ? 'text-emerald-400' : tot < 0 ? 'text-rose-400' : 'text-slate-400'}">
+                                ${tot > 0 ? '+' + tot : tot} pts
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // MID-GAME SCORE SHEET MODAL
+        function openScoreSheetModal() {
+            renderMatrixTable('modalMatrixHeader', 'modalMatrixBody');
+            
+            // Render Standing List in Modal
+            const { totals } = calculateTotals();
+            const container = document.getElementById('modalStandings');
+            container.innerHTML = '';
+
+            state.players.forEach((pName, pIdx) => {
+                const pts = totals[pIdx];
+                container.innerHTML += `
+                    <div class="flex justify-between items-center bg-slate-900 p-2 rounded-lg border border-slate-800">
+                        <span class="font-bold text-slate-300 truncate">${pName}</span>
+                        <span class="font-extrabold ${pts > 0 ? 'text-emerald-400' : pts < 0 ? 'text-rose-400' : 'text-slate-400'}">
+                            ${pts > 0 ? '+' : ''}${pts} pt
+                        </span>
+                    </div>
+                `;
+            });
+
+            document.getElementById('scoreSheetModal').classList.remove('hidden');
+        }
+
+        function closeScoreSheetModal() {
+            document.getElementById('scoreSheetModal').classList.add('hidden');
+        }
+
+        // RENDER 18-HOLE MATRIX TABLE
+        function renderMatrixTable(headerId, bodyId) {
+            const headerRow = document.getElementById(headerId);
+            const bodyContainer = document.getElementById(bodyId);
+
+            headerRow.innerHTML = `
+                <th class="py-2.5 px-2 text-left pl-3">Hole</th>
+                <th class="py-2.5 px-1">Mult.</th>
+            `;
+
+            state.players.forEach(pName => {
+                headerRow.innerHTML += `<th class="py-2.5 px-1 font-bold text-slate-200 truncate max-w-[65px]">${pName}</th>`;
+            });
+
+            bodyContainer.innerHTML = '';
+
+            for (let h = 1; h <= 18; h++) {
+                const multData = getHoleMultiplierData(h);
+                const tr = document.createElement('tr');
+                if (h === state.currentHole) {
+                    tr.className = 'bg-emerald-500/10 font-bold';
+                }
+
+                let playerCells = '';
+                state.players.forEach((_, pIdx) => {
+                    const pts = state.scores[h][pIdx];
+                    playerCells += `
+                        <td class="py-2 px-1 ${pts > 0 ? 'text-emerald-400 font-bold' : pts < 0 ? 'text-rose-400 font-bold' : 'text-slate-500'}">
+                            ${pts > 0 ? '+' + pts : pts}
+                        </td>
+                    `;
+                });
+
+                tr.innerHTML = `
+                    <td class="py-2 px-2 text-left pl-3 font-bold text-slate-300">H${h}</td>
+                    <td class="py-2 px-1 ${multData.mult > 1 ? 'text-amber-400 font-black' : 'text-slate-500'}">
+                        ${multData.mult > 1 ? `🔥${multData.mult}x` : '1x'}
+                    </td>
+                    ${playerCells}
+                `;
+                bodyContainer.appendChild(tr);
+            }
+        }
+
+        // FINAL RESULT SCREEN
+        function showResults() {
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+            document.getElementById('resultGameTitle').innerText = state.title;
+
+            const { totals } = calculateTotals();
+
+            const ranked = state.players.map((name, idx) => ({
+                name,
+                points: totals[idx]
+            })).sort((a, b) => b.points - a.points);
+
+            const container = document.getElementById('finalLeaderboard');
+            container.innerHTML = '';
+
+            ranked.forEach((item, index) => {
+                const isWinner = index === 0 && item.points > 0;
+                container.innerHTML += `
+                    <div class="bg-slate-950 border ${isWinner ? 'border-amber-500/50 bg-amber-500/10' : 'border-slate-800'} rounded-2xl p-4 flex justify-between items-center shadow-lg">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-xl font-black ${index === 0 ? 'text-amber-400' : 'text-slate-500'}">#${index + 1}</span>
+                            <h3 class="font-extrabold text-white text-base">${item.name}</h3>
+                        </div>
+                        <span class="text-2xl font-black ${item.points > 0 ? 'text-emerald-400' : item.points < 0 ? 'text-rose-400' : 'text-slate-400'}">
+                            ${item.points > 0 ? '+' + item.points : item.points} pt
+                        </span>
+                    </div>
+                `;
+            });
+
+            renderMatrixTable('finalMatrixHeader', 'finalMatrixBody');
+        }
+
+        function confirmReset() {
+            if (confirm("Start a new game? Current match data will be reset.")) {
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
