@@ -304,22 +304,20 @@
         }
 
         function getHoleMultiplier(holeNum) {
-            let mult = 1;
-            if (state.baseDoubleHoles.includes(holeNum)) {
-                mult *= 2;
-            }
+            // original assigned score at the current hole
+            let mult = state.baseDoubleHoles.includes(holeNum) ? 2 : 1;
 
-            let prevHole = holeNum - 1;
-            let carryoverCount = 0;
+            // Added tied hole score at a previous hole by 1
+            let prvhole = holeNum - 1;
+            let carryoverScore = 0;
+
             while (prevHole >= 1 && state.ties[prevHole]) {
-                carryoverCount++;
+                carryoverScore += 1;
                 prevHole--;
             }
 
-            if (carryoverCount > 0) {
-                mult *= Math.pow(2, carryoverCount);
-            }
-
+            // total = base + accumulated score
+            multi = mult + carryoverScore;
             return mult;
         }
 
@@ -336,9 +334,9 @@
             } else if (mult === 2) {
                 banner.className = "mt-2 py-2 px-4 rounded-xl font-extrabold text-base bg-amber-500/20 text-amber-400 border border-amber-500/40";
                 banner.innerHTML = `🔥 DOUBLE HOLE (2pts per win)`;
-            } else if (mult === 4) {
+            } else if (mult === 3) {
                 banner.className = "mt-2 py-2 px-4 rounded-xl font-black text-lg bg-rose-500/20 text-rose-400 border border-rose-500/40";
-                banner.innerHTML = `🔥🔥 QUADRUPLE HOLE (4pts per win)`;
+                banner.innerHTML = `🔥🔥 TRIPLE HOLE (3pts per win)`;
             } else {
                 banner.className = "mt-2 py-2 px-4 rounded-xl font-black text-xl bg-purple-500/20 text-purple-300 border border-purple-500/40";
                 banner.innerHTML = `🔥🔥🔥 ${mult}x MULTIPLIER (${mult}pts per win)`;
