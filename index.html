@@ -1,9 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Golf Betting Scorecard</title>
+    <title>TVPC Golf</title>
+
+    <!-- 스마트폰 홈 화면 앱(PWA) 설정 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="골프 스코어">
+    <meta name="theme-color" content="#020617">
+
+    <!-- 스마트폰 홈 화면 아이콘 (SVG Data-URI 내장) -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='120' fill='%23020617'/><circle cx='256' cy='256' r='210' fill='%23059669' opacity='0.2'/><path d='M170 380 L170 110 L350 170 L170 230 Z' fill='%2310b981'/><rect x='160' y='100' width='16' height='300' rx='8' fill='%23f8fafc'/><ellipse cx='280' cy='390' rx='70' ry='20' fill='%230f172a'/><circle cx='270' cy='380' r='12' fill='%23ffffff'/></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='120' fill='%23020617'/><circle cx='256' cy='256' r='210' fill='%23059669' opacity='0.2'/><path d='M170 380 L170 110 L350 170 L170 230 Z' fill='%2310b981'/><rect x='160' y='100' width='16' height='300' rx='8' fill='%23f8fafc'/><ellipse cx='280' cy='390' rx='70' ry='20' fill='%230f172a'/><circle cx='270' cy='380' r='12' fill='%23ffffff'/></svg>">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
@@ -40,7 +52,7 @@
                 <!-- Game Title -->
                 <div>
                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-2">Game Title</label>
-                    <input type="text" id="gameTitleInput" value="TVPC Golf Skins" placeholder="e.g. 명랑골프 내기" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 font-medium">
+                    <input type="text" id="gameTitleInput" value="TVPC Golf Skins" placeholder="볼빅스틱" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 font-medium">
                 </div>
 
                 <!-- Players (Default 4) -->
