@@ -1,0 +1,13 @@
+{
+  "name": "TVPC Golf",
+  "short_name": "TVPC Golf",
+  "description": "TVPC Golf points scorecard and skins game app",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "lang": "en"  
+}

@@ -11,6 +11,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="TVPC Golf">
     <meta name="theme-color" content="#020617">
+    <link rel="manifest" href="manifest.json">
 
     <!-- Icon for Smart Phone -->
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='120' fill='%23020617'/><circle cx='256' cy='256' r='210' fill='%23059669' opacity='0.2'/><path d='M170 380 L170 110 L350 170 L170 230 Z' fill='%2310b981'/><rect x='160' y='100' width='16' height='300' rx='8' fill='%23f8fafc'/><ellipse cx='280' cy='390' rx='70' ry='20' fill='%230f172a'/><circle cx='270' cy='380' r='12' fill='%23ffffff'/></svg>">
@@ -269,13 +270,13 @@
                 const div = document.createElement('div');
                 div.className = 'flex items-center gap-2';
                 div.innerHTML = `
-                        <span class="text-xs font-bold text-slate-500 w-5">${index + 1}</span>
-                        <input type="text" value="${name}" onchange="updatePlayerName(${index}, this.value)" placeholder="Enter name"
-                            class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500">
-                        ${state.players.length > 2 ? `
-                            <button onclick="removePlayerInput(${index})" class="text-slate-500 hover:text-rose-400 px-2 py-1 text-sm">✕</button>
-                        ` : '<span class="w-6"></span>'}
-                    `;
+                            <span class="text-xs font-bold text-slate-500 w-5">${index + 1}</span>
+                            <input type="text" value="${name}" onchange="updatePlayerName(${index}, this.value)" placeholder="Enter name"
+                                class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500">
+                            ${state.players.length > 2 ? `
+                                <button onclick="removePlayerInput(${index})" class="text-slate-500 hover:text-rose-400 px-2 py-1 text-sm">✕</button>
+                            ` : '<span class="w-6"></span>'}
+                        `;
                 container.appendChild(div);
             });
 
@@ -307,13 +308,13 @@
             for (let i = 1; i <= 18; i++) {
                 const checked = DEFAULT_BASE_DOUBLES.includes(i) ? 'checked' : '';
                 grid.innerHTML += `
-                        <label class="cursor-pointer">
-                            <input type="checkbox" value="${i}" ${checked} class="peer hidden double-hole-check">
-                            <div class="w-full py-2 bg-slate-900 border border-slate-800 rounded-lg text-center text-xs font-semibold text-slate-400 peer-checked:bg-emerald-500/20 peer-checked:border-emerald-500 peer-checked:text-emerald-400 hover:border-slate-700">
-                                ${i}
-                            </div>
-                        </label>
-                    `;
+                            <label class="cursor-pointer">
+                                <input type="checkbox" value="${i}" ${checked} class="peer hidden double-hole-check">
+                                <div class="w-full py-2 bg-slate-900 border border-slate-800 rounded-lg text-center text-xs font-semibold text-slate-400 peer-checked:bg-emerald-500/20 peer-checked:border-emerald-500 peer-checked:text-emerald-400 hover:border-slate-700">
+                                    ${i}
+                                </div>
+                            </label>
+                        `;
             }
         }
 
@@ -346,7 +347,7 @@
             let mult = state.baseDoubleHoles.includes(holeNum) ? 2 : 1;
             let prevHole = holeNum - 1;
             let carryoverScore = 0;
- 
+
             while (prevHole >= 1 && state.ties[prevHole]) {
                 let carry = state.baseDoubleHoles.includes(prevHole) ? 2 : 1;
                 carryoverScore += carry;
@@ -385,22 +386,22 @@
                 const isWinner = score > 0;
 
                 container.innerHTML += `
-                        <div class="flex items-center justify-between bg-slate-950 border ${isWinner ? 'border-emerald-500/60 bg-emerald-500/5' : 'border-slate-800'} rounded-xl p-2.5">
-                            <div class="flex items-center gap-2">
-                                <button onclick="toggleWinner(${pIdx})" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${isWinner ? 'bg-emerald-500 text-slate-950 shadow-md' : 'bg-slate-800 text-slate-400 border border-slate-700 hover:text-white'}">
-                                    🏆 WIN
-                                </button>
-                                <span class="font-bold text-white text-sm">${pName}</span>
+                            <div class="flex items-center justify-between bg-slate-950 border ${isWinner ? 'border-emerald-500/60 bg-emerald-500/5' : 'border-slate-800'} rounded-xl p-2.5">
+                                <div class="flex items-center gap-2">
+                                    <button onclick="toggleWinner(${pIdx})" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${isWinner ? 'bg-emerald-500 text-slate-950 shadow-md' : 'bg-slate-800 text-slate-400 border border-slate-700 hover:text-white'}">
+                                        🏆 WIN
+                                    </button>
+                                    <span class="font-bold text-white text-sm">${pName}</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="adjustScore(${pIdx}, -1)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-base font-bold text-slate-300 hover:bg-slate-700">-</button>
+                                    <span class="w-8 text-center text-lg font-black ${score > 0 ? 'text-emerald-400' : 'text-slate-400'}">
+                                        ${score > 0 ? '+' + score : score}
+                                    </span>
+                                    <button onclick="adjustScore(${pIdx}, 1)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-base font-bold text-slate-300 hover:bg-slate-700">+</button>
+                                </div>
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <button onclick="adjustScore(${pIdx}, -1)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-base font-bold text-slate-300 hover:bg-slate-700">-</button>
-                                <span class="w-8 text-center text-lg font-black ${score > 0 ? 'text-emerald-400' : 'text-slate-400'}">
-                                    ${score > 0 ? '+' + score : score}
-                                </span>
-                                <button onclick="adjustScore(${pIdx}, 1)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-base font-bold text-slate-300 hover:bg-slate-700">+</button>
-                            </div>
-                        </div>
-                    `;
+                        `;
             });
 
             renderLiveTotals();
@@ -481,13 +482,13 @@
             state.players.forEach((pName, pIdx) => {
                 const tot = totals[pIdx];
                 container.innerHTML += `
-                        <div class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 flex justify-between items-center">
-                            <span class="text-xs font-semibold text-slate-300 truncate">${pName}</span>
-                            <span class="text-sm font-bold ${tot > 0 ? 'text-emerald-400' : 'text-slate-400'}">
-                                ${tot} pts
-                            </span>
-                        </div>
-                    `;
+                            <div class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 flex justify-between items-center">
+                                <span class="text-xs font-semibold text-slate-300 truncate">${pName}</span>
+                                <span class="text-sm font-bold ${tot > 0 ? 'text-emerald-400' : 'text-slate-400'}">
+                                    ${tot} pts
+                                </span>
+                            </div>
+                        `;
             });
         }
 
@@ -502,20 +503,20 @@
 
             ranked.forEach((item, rIdx) => {
                 standingsContainer.innerHTML += `
-                        <div class="flex justify-between items-center text-xs">
-                            <span class="text-slate-400"><strong class="text-white">#${rIdx + 1}</strong> ${item.name}</span>
-                            <span class="font-bold ${item.pts > 0 ? 'text-emerald-400' : 'text-slate-400'}">
-                                ${item.pts} pts
-                            </span>
-                        </div>
-                    `;
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-slate-400"><strong class="text-white">#${rIdx + 1}</strong> ${item.name}</span>
+                                <span class="font-bold ${item.pts > 0 ? 'text-emerald-400' : 'text-slate-400'}">
+                                    ${item.pts} pts
+                                </span>
+                            </div>
+                        `;
             });
 
             const headerRow = document.getElementById('matrixHeaderRow');
             headerRow.innerHTML = `
-                    <th class="py-2 px-1">Hole</th>
-                    <th class="py-2 px-1 text-center">Mult</th>
-                ` + state.players.map(p => `<th class="py-2 px-1 text-right truncate max-w-[60px]">${p}</th>`).join('');
+                        <th class="py-2 px-1">Hole</th>
+                        <th class="py-2 px-1 text-center">Mult</th>
+                    ` + state.players.map(p => `<th class="py-2 px-1 text-right truncate max-w-[60px]">${p}</th>`).join('');
 
             const tbody = document.getElementById('matrixTableBody');
             tbody.innerHTML = '';
@@ -529,12 +530,12 @@
                 }).join('');
 
                 tbody.innerHTML += `
-                        <tr class="${state.currentHole === h ? 'bg-emerald-500/10' : ''}">
-                            <td class="py-2 px-1 font-medium text-slate-400">Hole ${h}</td>
-                            <td class="py-2 px-1 text-center font-bold ${mult > 1 ? 'text-amber-400' : 'text-slate-600'}">${mult}x</td>
-                            ${playerCells}
-                        </tr>
-                    `;
+                            <tr class="${state.currentHole === h ? 'bg-emerald-500/10' : ''}">
+                                <td class="py-2 px-1 font-medium text-slate-400">Hole ${h}</td>
+                                <td class="py-2 px-1 text-center font-bold ${mult > 1 ? 'text-amber-400' : 'text-slate-600'}">${mult}x</td>
+                                ${playerCells}
+                            </tr>
+                        `;
             }
         }
 
@@ -556,16 +557,16 @@
             ranked.forEach((item, index) => {
                 const isWinner = index === 0 && item.points > 0;
                 container.innerHTML += `
-                        <div class="bg-slate-900 border ${isWinner ? 'border-amber-500/50 bg-amber-500/5' : 'border-slate-800'} rounded-xl p-4 flex justify-between items-center">
-                            <div class="flex items-center space-x-3">
-                                <span class="text-lg font-black ${index === 0 ? 'text-amber-400' : 'text-slate-500'}">#${index + 1}</span>
-                                <h3 class="font-bold text-white text-base">${item.name}</h3>
+                            <div class="bg-slate-900 border ${isWinner ? 'border-amber-500/50 bg-amber-500/5' : 'border-slate-800'} rounded-xl p-4 flex justify-between items-center">
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-lg font-black ${index === 0 ? 'text-amber-400' : 'text-slate-500'}">#${index + 1}</span>
+                                    <h3 class="font-bold text-white text-base">${item.name}</h3>
+                                </div>
+                                <span class="text-2xl font-black ${item.points > 0 ? 'text-emerald-400' : 'text-slate-400'}">
+                                    ${item.points} pts
+                                </span>
                             </div>
-                            <span class="text-2xl font-black ${item.points > 0 ? 'text-emerald-400' : 'text-slate-400'}">
-                                ${item.points} pts
-                            </span>
-                        </div>
-                    `;
+                        `;
             });
 
             // Auto Save Match to History
@@ -583,7 +584,7 @@
                 standings: ranked
             };
 
-            history.unshift(newRecord); // ordering the latest data to the up position 
+            history.unshift(newRecord); // ordering the latest data to the up position
             localStorage.setItem('tvpc_golf_history', JSON.stringify(history));
         }
 
@@ -594,10 +595,10 @@
 
             if (history.length === 0) {
                 container.innerHTML = `
-                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 text-center text-slate-500 text-sm">
-                            No Saved Hisory.
-                        </div>
-                    `;
+                            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 text-center text-slate-500 text-sm">
+                                No Saved Hisory.
+                            </div>
+                        `;
                 return;
             }
 
@@ -606,29 +607,29 @@
                 const winnerText = winners.length > 0 ? winners.map(w => w.name).join(', ') : 'No Winner';
 
                 const standingsHTML = item.standings.map((s, idx) => `
-                        <div class="flex justify-between items-center text-xs py-0.5">
-                            <span class="text-slate-400">${idx + 1}. ${s.name}</span>
-                            <span class="font-bold ${s.points > 0 ? 'text-emerald-400' : 'text-slate-500'}">${s.points} pts</span>
-                        </div>
-                    `).join('');
+                            <div class="flex justify-between items-center text-xs py-0.5">
+                                <span class="text-slate-400">${idx + 1}. ${s.name}</span>
+                                <span class="font-bold ${s.points > 0 ? 'text-emerald-400' : 'text-slate-500'}">${s.points} pts</span>
+                            </div>
+                        `).join('');
 
                 container.innerHTML += `
-                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-2">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h3 class="font-bold text-white text-sm">${item.title}</h3>
-                                    <p class="text-[11px] text-slate-500">${item.date}</p>
+                            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-2">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="font-bold text-white text-sm">${item.title}</h3>
+                                        <p class="text-[11px] text-slate-500">${item.date}</p>
+                                    </div>
+                                    <button onclick="deleteHistoryItem(${item.id})" class="text-slate-600 hover:text-rose-400 text-xs px-1.5 py-0.5">✕</button>
                                 </div>
-                                <button onclick="deleteHistoryItem(${item.id})" class="text-slate-600 hover:text-rose-400 text-xs px-1.5 py-0.5">✕</button>
-                            </div>
-                            <div class="text-xs bg-slate-950 p-2 rounded-lg border border-slate-800/80">
-                                <p class="text-[11px] text-amber-400 font-bold mb-1">🏆 ${winnerText}</p>
-                                <div class="divide-y divide-slate-800/40">
-                                    ${standingsHTML}
+                                <div class="text-xs bg-slate-950 p-2 rounded-lg border border-slate-800/80">
+                                    <p class="text-[11px] text-amber-400 font-bold mb-1">🏆 ${winnerText}</p>
+                                    <div class="divide-y divide-slate-800/40">
+                                        ${standingsHTML}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        `;
             });
         }
 
@@ -653,84 +654,73 @@
         }
 
         // ======================================================
-        // Android Back Button Protection
+        // Android Back Button / Standalone App Navigation
         // ======================================================
-
-        // Create a history entry for the main screen.
-        // This prevents the Android Back button from immediately
-        // leaving the standalone app.
+        // Keep one history entry for the main screen so the Android
+        // Back button does not immediately close the standalone app.
         history.replaceState({ page: 'main' }, '', window.location.href);
-
-
-        // ======================================================
-        // Score Modal
-        // ======================================================
 
         function toggleScoreModal(show) {
             const modal = document.getElementById('scoreModal');
 
             if (show) {
+                // Do not add another history entry if the modal is already open.
+                if (!modal.classList.contains('hidden')) return;
+
                 renderMatrixTable();
                 modal.classList.remove('hidden');
-
-                // Add a history entry for the modal
                 history.pushState({ modalOpen: 'score' }, '', window.location.href);
-
             } else {
-                modal.classList.add('hidden');
+                // If this modal was opened by pushState, go back to the main state.
+                if (!modal.classList.contains('hidden') && history.state?.modalOpen === 'score') {
+                    history.back();
+                } else {
+                    modal.classList.add('hidden');
+                }
             }
         }
-
-
-        // ======================================================
-        // History Modal
-        // ======================================================
 
         function toggleHistoryModal(show) {
             const modal = document.getElementById('historyModal');
 
             if (show) {
+                // Do not add another history entry if the modal is already open.
+                if (!modal.classList.contains('hidden')) return;
+
                 renderHistoryList();
                 modal.classList.remove('hidden');
-
-                // Add a history entry for the modal
                 history.pushState({ modalOpen: 'history' }, '', window.location.href);
-
             } else {
-                modal.classList.add('hidden');
+                // If this modal was opened by pushState, go back to the main state.
+                if (!modal.classList.contains('hidden') && history.state?.modalOpen === 'history') {
+                    history.back();
+                } else {
+                    modal.classList.add('hidden');
+                }
             }
         }
 
-
-        // ======================================================
-        // Android Back Button
-        // ======================================================
-
+        // Android hardware Back button / browser Back button.
         window.addEventListener('popstate', function (event) {
-
             const scoreModal = document.getElementById('scoreModal');
             const historyModal = document.getElementById('historyModal');
 
-
-            // Score Modal is open
+            // Back from Score Sheet -> close Score Sheet only.
             if (!scoreModal.classList.contains('hidden')) {
                 scoreModal.classList.add('hidden');
                 return;
             }
 
-
-            // History Modal is open
+            // Back from History -> close History only.
             if (!historyModal.classList.contains('hidden')) {
                 historyModal.classList.add('hidden');
                 return;
             }
 
-
-            // Main screen
-            // Prevent the app from leaving when Android Back is pressed.
+            // Back on the main screen: immediately create a new main entry.
+            // This keeps the standalone app open instead of exiting.
             history.pushState({ page: 'main' }, '', window.location.href);
         });
-
     </script>
 </body>
 </html>
