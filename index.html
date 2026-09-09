@@ -34,7 +34,6 @@
             user-select: none;
         }
 
-        /* Radio Button Custom Styling for absolute visibility */
         .mode-option-input:checked + .mode-option-card {
             border-color: #10b981 !important;
             background-color: rgba(16, 185, 129, 0.15) !important;
@@ -71,6 +70,17 @@
         <!-- SETUP SCREEN -->
         <section id="setupScreen" class="p-5 flex-1 flex flex-col justify-between space-y-6">
             <div class="space-y-6">
+                <!-- RESUME ACTIVE GAME BUTTON (진행 중인 게임이 있을 때 표시) -->
+                <div id="resumeGameCard" class="hidden bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-sm font-bold text-emerald-400">In-Progress Game Found</h3>
+                        <p class="text-[11px] text-slate-400" id="resumeGameSub">Tap to continue active round</p>
+                    </div>
+                    <button onclick="resumeActiveGame()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-xl shadow-md">
+                        Resume ▶️
+                    </button>
+                </div>
+
                 <!-- Game Title Input -->
                 <div>
                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-2">Game Title</label>
@@ -91,7 +101,7 @@
                     </button>
                 </div>
 
-                <!-- GAME CARRYOVER MODE SELECTION -->
+                <!-- Carryover Rule Selection -->
                 <div class="bg-slate-900/80 p-3.5 border border-slate-800 rounded-2xl space-y-2">
                     <label class="block text-xs font-semibold uppercase text-slate-400">Carryover Rule (Tie Option)</label>
                     <div class="grid grid-cols-2 gap-2">
@@ -122,7 +132,7 @@
             </div>
 
             <button onclick="startGame()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-4 rounded-xl shadow-lg shadow-emerald-500/20 text-lg transition">
-                Start Game
+                Start New Game
             </button>
         </section>
 
@@ -193,7 +203,6 @@
                     </button>
                 </div>
 
-                <!-- Current Standings Summary -->
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-3">
                     <h4 class="text-xs font-bold text-slate-400 uppercase mb-2">Live Ranking</h4>
                     <div id="modalStandings" class="space-y-1.5">
@@ -201,7 +210,6 @@
                     </div>
                 </div>
 
-                <!-- 18-Hole Matrix Score Table -->
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 overflow-x-auto">
                     <h4 class="text-xs font-bold text-slate-400 uppercase mb-2">18-Hole Matrix Table</h4>
                     <table class="w-full text-xs text-left border-collapse">
@@ -209,7 +217,6 @@
                             <tr class="border-b border-slate-800 text-slate-400" id="matrixHeaderRow">
                                 <th class="py-2 px-1">Hole</th>
                                 <th class="py-2 px-1 text-center">Mult</th>
-                                <!-- Player Columns -->
                             </tr>
                         </thead>
                         <tbody id="matrixTableBody" class="divide-y divide-slate-800/50">
@@ -259,12 +266,10 @@
                 <p class="text-xs text-slate-400">Official Game Results</p>
             </div>
 
-            <!-- Final Leaderboard Cards -->
             <div id="finalLeaderboard" class="space-y-3">
                 <!-- Dynamic Leaderboard Items -->
             </div>
 
-            <!-- Reset Actions -->
             <div class="pt-2">
                 <button onclick="confirmReset()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3.5 rounded-xl">
                     Start New Game
@@ -279,7 +284,7 @@
         let state = {
             title: "TVPC Golf",
             players: ["Player 1", "Player 2", "Player 3", "Player 4"],
-            mode: "add", // 'add' (Cumulative) or 'multiply' (Always Double x2)
+            mode: "add",
             baseDoubleHoles: [17, 18],
             currentHole: 1,
             scores: {},
@@ -291,25 +296,39 @@
         window.onload = () => {
             renderSetupPlayers();
             renderDoubleHolesGrid();
+            checkActiveGameExists();
+        };
 
-            // Check for previous saved active game session
+        function checkActiveGameExists() {
+            const savedState = localStorage.getItem('tvpc_golf_active_game');
+            const card = document.getElementById('resumeGameCard');
+            if (savedState) {
+                try {
+                    const parsed = JSON.parse(savedState);
+                    document.getElementById('resumeGameSub').innerText = `${parsed.title} (Hole ${parsed.currentHole})`;
+                    card.classList.remove('hidden');
+                } catch (e) {
+                    card.classList.add('hidden');
+                }
+            } else {
+                card.classList.add('hidden');
+            }
+        }
+
+        function resumeActiveGame() {
             const savedState = localStorage.getItem('tvpc_golf_active_game');
             if (savedState) {
-                if (confirm("You have an active game in progress. Would you like to resume it?")) {
-                    state = JSON.parse(savedState);
-                    document.getElementById('setupScreen').classList.add('hidden');
-                    document.getElementById('gameScreen').classList.remove('hidden');
-                    document.getElementById('btnViewScore').classList.remove('hidden');
-                    document.getElementById('btnReset').classList.remove('hidden');
-                    document.getElementById('headerGameTitle').innerText = state.title;
+                state = JSON.parse(savedState);
+                document.getElementById('setupScreen').classList.add('hidden');
+                document.getElementById('gameScreen').classList.remove('hidden');
+                document.getElementById('btnViewScore').classList.remove('hidden');
+                document.getElementById('btnReset').classList.remove('hidden');
+                document.getElementById('headerGameTitle').innerText = state.title;
 
-                    history.pushState({ inGame: true }, "");
-                    renderHole();
-                } else {
-                    localStorage.removeItem('tvpc_golf_active_game');
-                }
+                history.pushState({ inGame: true }, "");
+                renderHole();
             }
-        };
+        }
 
         function renderSetupPlayers() {
             const container = document.getElementById('playerInputs');
@@ -374,7 +393,6 @@
         function startGame() {
             state.title = document.getElementById('gameTitleInput').value.trim() || "Skins Game";
 
-            // Get selected game mode safely
             const modeRadios = document.getElementsByName('gameMode');
             for (let radio of modeRadios) {
                 if (radio.checked) {
@@ -408,12 +426,10 @@
             renderHole();
         }
 
-        // Multiplier Logic (Cumulative vs Double Always)
         function getHoleMultiplier(holeNum) {
             let baseVal = state.baseDoubleHoles.includes(holeNum) ? 2 : 1;
 
             if (state.mode === 'multiply') {
-                // [Double Always Mode]
                 let prevHole = holeNum - 1;
                 let tieCount = 0;
                 while (prevHole >= 1 && state.ties[prevHole]) {
@@ -422,7 +438,6 @@
                 }
                 return baseVal * Math.pow(2, tieCount);
             } else {
-                // [Cumulative Mode]
                 let prevHole = holeNum - 1;
                 let carryoverScore = 0;
                 while (prevHole >= 1 && state.ties[prevHole]) {
@@ -593,12 +608,14 @@
         }
 
         function showSetupScreen() {
+            saveCurrentGameState(); // 중단 시 확실히 세이브 실행!
             document.getElementById('gameScreen').classList.add('hidden');
             document.getElementById('resultScreen').classList.add('hidden');
             document.getElementById('setupScreen').classList.remove('hidden');
             document.getElementById('btnViewScore').classList.add('hidden');
             document.getElementById('btnReset').classList.add('hidden');
             document.getElementById('headerGameTitle').innerText = "Skins Game";
+            checkActiveGameExists();
         }
 
         window.addEventListener('popstate', (event) => {
