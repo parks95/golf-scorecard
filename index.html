@@ -491,16 +491,6 @@
             });
         }
 
-        function toggleScoreModal(show) {
-            const modal = document.getElementById('scoreModal');
-            if (show) {
-                renderMatrixTable();
-                modal.classList.remove('hidden');
-            } else {
-                modal.classList.add('hidden');
-            }
-        }
-
         function renderMatrixTable() {
             const { totals } = calculateTotals();
 
@@ -597,16 +587,6 @@
             localStorage.setItem('tvpc_golf_history', JSON.stringify(history));
         }
 
-        function toggleHistoryModal(show) {
-            const modal = document.getElementById('historyModal');
-            if (show) {
-                renderHistoryList();
-                modal.classList.remove('hidden');
-            } else {
-                modal.classList.add('hidden');
-            }
-        }
-
         function renderHistoryList() {
             const history = JSON.parse(localStorage.getItem('tvpc_golf_history') || '[]');
             const container = document.getElementById('historyList');
@@ -672,42 +652,85 @@
             }
         }
 
-        // Adding the protection code for the back key
-        // 1. adding the score / history when opening the modal
+        // ======================================================
+        // Android Back Button Protection
+        // ======================================================
+
+        // Create a history entry for the main screen.
+        // This prevents the Android Back button from immediately
+        // leaving the standalone app.
+        history.replaceState({ page: 'main' }, '', window.location.href);
+
+
+        // ======================================================
+        // Score Modal
+        // ======================================================
+
         function toggleScoreModal(show) {
             const modal = document.getElementById('scoreModal');
+
             if (show) {
                 renderMatrixTable();
                 modal.classList.remove('hidden');
-                history.pushState({ modalOpen: 'score' }, ""); // adding score
+
+                // Add a history entry for the modal
+                history.pushState({ modalOpen: 'score' }, '', window.location.href);
+
             } else {
                 modal.classList.add('hidden');
             }
         }
+
+
+        // ======================================================
+        // History Modal
+        // ======================================================
 
         function toggleHistoryModal(show) {
             const modal = document.getElementById('historyModal');
+
             if (show) {
                 renderHistoryList();
                 modal.classList.remove('hidden');
-                history.pushState({ modalOpen: 'history' }, ""); // adding history
+
+                // Add a history entry for the modal
+                history.pushState({ modalOpen: 'history' }, '', window.location.href);
+
             } else {
                 modal.classList.add('hidden');
             }
         }
 
-        // 2. Listening the window event
-        window.addEventListener('popstate', (event) => {
+
+        // ======================================================
+        // Android Back Button
+        // ======================================================
+
+        window.addEventListener('popstate', function (event) {
+
             const scoreModal = document.getElementById('scoreModal');
             const historyModal = document.getElementById('historyModal');
 
-            // if a modal is opened, close only the modal instead of closing the app itself
+
+            // Score Modal is open
             if (!scoreModal.classList.contains('hidden')) {
                 scoreModal.classList.add('hidden');
-            } else if (!historyModal.classList.contains('hidden')) {
-                historyModal.classList.add('hidden');
+                return;
             }
+
+
+            // History Modal is open
+            if (!historyModal.classList.contains('hidden')) {
+                historyModal.classList.add('hidden');
+                return;
+            }
+
+
+            // Main screen
+            // Prevent the app from leaving when Android Back is pressed.
+            history.pushState({ page: 'main' }, '', window.location.href);
         });
+
     </script>
 </body>
 </html>
