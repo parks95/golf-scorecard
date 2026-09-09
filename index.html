@@ -346,9 +346,10 @@
             let mult = state.baseDoubleHoles.includes(holeNum) ? 2 : 1;
             let prevHole = holeNum - 1;
             let carryoverScore = 0;
-
+ 
             while (prevHole >= 1 && state.ties[prevHole]) {
-                carryoverScore += 1;
+                let carry = state.baseDoubleHoles.includes(prevHole) ? 2 : 1;
+                carryoverScore += carry;
                 prevHole--;
             }
 
@@ -438,6 +439,7 @@
             });
             state.ties[h] = true;
             renderHole();
+            changeHole(1);
         }
 
         function changeHole(dir) {
@@ -591,7 +593,7 @@
                 standings: ranked
             };
 
-            history.unshift(newRecord); // 최신 기록이 위로 오도록 저장
+            history.unshift(newRecord); // ordering the latest data to the up position 
             localStorage.setItem('tvpc_golf_history', JSON.stringify(history));
         }
 
@@ -669,6 +671,43 @@
                 location.reload();
             }
         }
+
+        // Adding the protection code for the back key
+        // 1. adding the score / history when opening the modal
+        function toggleScoreModal(show) {
+            const modal = document.getElementById('scoreModal');
+            if (show) {
+                renderMatrixTable();
+                modal.classList.remove('hidden');
+                history.pushState({ modalOpen: 'score' }, ""); // adding score
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function toggleHistoryModal(show) {
+            const modal = document.getElementById('historyModal');
+            if (show) {
+                renderHistoryList();
+                modal.classList.remove('hidden');
+                history.pushState({ modalOpen: 'history' }, ""); // adding history
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        // 2. Listening the window event
+        window.addEventListener('popstate', (event) => {
+            const scoreModal = document.getElementById('scoreModal');
+            const historyModal = document.getElementById('historyModal');
+
+            // if a modal is opened, close only the modal instead of closing the app itself
+            if (!scoreModal.classList.contains('hidden')) {
+                scoreModal.classList.add('hidden');
+            } else if (!historyModal.classList.contains('hidden')) {
+                historyModal.classList.add('hidden');
+            }
+        });
     </script>
 </body>
 </html>
