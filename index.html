@@ -1,19 +1,21 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TVPC Golf</title>
 
-    <!-- Setting for Smart Phone App -->
+    <!-- Manifest.json Connection (PWA Configuration) -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Settings for Smartphone App / PWA -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="TVPC Golf">
     <meta name="theme-color" content="#020617">
-    <link rel="manifest" href="manifest.json">
 
-    <!-- Icon for Smart Phone -->
+    <!-- App Icons -->
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='120' fill='%23020617'/><circle cx='256' cy='256' r='210' fill='%23059669' opacity='0.2'/><path d='M170 380 L170 110 L350 170 L170 230 Z' fill='%2310b981'/><rect x='160' y='100' width='16' height='300' rx='8' fill='%23f8fafc'/><ellipse cx='280' cy='390' rx='70' ry='20' fill='%230f172a'/><circle cx='270' cy='380' r='12' fill='%23ffffff'/></svg>">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='120' fill='%23020617'/><circle cx='256' cy='256' r='210' fill='%23059669' opacity='0.2'/><path d='M170 380 L170 110 L350 170 L170 230 Z' fill='%2310b981'/><rect x='160' y='100' width='16' height='300' rx='8' fill='%23f8fafc'/><ellipse cx='280' cy='390' rx='70' ry='20' fill='%230f172a'/><circle cx='270' cy='380' r='12' fill='%23ffffff'/></svg>">
 
@@ -30,6 +32,13 @@
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
+        }
+
+        /* Radio Button Custom Styling for absolute visibility */
+        .mode-option-input:checked + .mode-option-card {
+            border-color: #10b981 !important;
+            background-color: rgba(16, 185, 129, 0.15) !important;
+            color: #34d399 !important;
         }
     </style>
 </head>
@@ -62,13 +71,13 @@
         <!-- SETUP SCREEN -->
         <section id="setupScreen" class="p-5 flex-1 flex flex-col justify-between space-y-6">
             <div class="space-y-6">
-                <!-- Game Title -->
+                <!-- Game Title Input -->
                 <div>
                     <label class="block text-xs font-semibold uppercase text-slate-400 mb-2">Game Title</label>
-                    <input type="text" id="gameTitleInput" value="TVPC Golf Skins" placeholder="볼빅스틱" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 font-medium">
+                    <input type="text" id="gameTitleInput" value="TVPC Golf Skins" placeholder="Enter Game Title" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 font-medium">
                 </div>
 
-                <!-- Players (Default 4) -->
+                <!-- Players (2 ~ 4) -->
                 <div>
                     <div class="flex justify-between items-center mb-2">
                         <label class="block text-xs font-semibold uppercase text-slate-400">Players (2 ~ 4)</label>
@@ -80,6 +89,27 @@
                     <button id="btnAddPlayer" onclick="addPlayerInput()" class="mt-3 w-full py-2.5 border border-dashed border-slate-700 rounded-xl text-slate-400 hover:text-white hover:border-slate-500 text-sm font-medium transition flex items-center justify-center gap-1">
                         <span>+</span> Add Player
                     </button>
+                </div>
+
+                <!-- GAME CARRYOVER MODE SELECTION -->
+                <div class="bg-slate-900/80 p-3.5 border border-slate-800 rounded-2xl space-y-2">
+                    <label class="block text-xs font-semibold uppercase text-slate-400">Carryover Rule (Tie Option)</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="cursor-pointer block">
+                            <input type="radio" name="gameMode" value="add" checked class="mode-option-input hidden">
+                            <div class="mode-option-card w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-center transition">
+                                <div class="text-xs font-bold mb-1">➕ Cumulative</div>
+                                <div class="text-[10px] text-slate-400 leading-tight">Add previous tied hole points</div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer block">
+                            <input type="radio" name="gameMode" value="multiply" class="mode-option-input hidden">
+                            <div class="mode-option-card w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-center transition">
+                                <div class="text-xs font-bold mb-1">✖️ Double Always</div>
+                                <div class="text-[10px] text-slate-400 leading-tight">Multiply x2 for each tied hole</div>
+                            </div>
+                        </label>
+                    </div>
                 </div>
 
                 <!-- Base Double Holes -->
@@ -118,8 +148,8 @@
                 <div>
                     <div class="flex justify-between items-center mb-3">
                         <span class="text-xs font-semibold text-slate-400 uppercase">Select Winner(s) (Max 2)</span>
-                        <button onclick="setTieHole()" class="text-[11px] bg-amber-500/10 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-lg font-semibold hover:bg-amber-500/20">
-                            🤝 Tie / Draw
+                        <button onclick="setTieHole()" class="text-[11px] bg-amber-500/10 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-lg font-semibold hover:bg-amber-500/20 active:scale-95 transition">
+                            🤝 Tie / Draw ➔
                         </button>
                     </div>
 
@@ -249,6 +279,7 @@
         let state = {
             title: "TVPC Golf",
             players: ["Player 1", "Player 2", "Player 3", "Player 4"],
+            mode: "add", // 'add' (Cumulative) or 'multiply' (Always Double x2)
             baseDoubleHoles: [17, 18],
             currentHole: 1,
             scores: {},
@@ -260,6 +291,24 @@
         window.onload = () => {
             renderSetupPlayers();
             renderDoubleHolesGrid();
+
+            // Check for previous saved active game session
+            const savedState = localStorage.getItem('tvpc_golf_active_game');
+            if (savedState) {
+                if (confirm("You have an active game in progress. Would you like to resume it?")) {
+                    state = JSON.parse(savedState);
+                    document.getElementById('setupScreen').classList.add('hidden');
+                    document.getElementById('gameScreen').classList.remove('hidden');
+                    document.getElementById('btnViewScore').classList.remove('hidden');
+                    document.getElementById('btnReset').classList.remove('hidden');
+                    document.getElementById('headerGameTitle').innerText = state.title;
+
+                    history.pushState({ inGame: true }, "");
+                    renderHole();
+                } else {
+                    localStorage.removeItem('tvpc_golf_active_game');
+                }
+            }
         };
 
         function renderSetupPlayers() {
@@ -270,13 +319,13 @@
                 const div = document.createElement('div');
                 div.className = 'flex items-center gap-2';
                 div.innerHTML = `
-                            <span class="text-xs font-bold text-slate-500 w-5">${index + 1}</span>
-                            <input type="text" value="${name}" onchange="updatePlayerName(${index}, this.value)" placeholder="Enter name"
-                                class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500">
-                            ${state.players.length > 2 ? `
-                                <button onclick="removePlayerInput(${index})" class="text-slate-500 hover:text-rose-400 px-2 py-1 text-sm">✕</button>
-                            ` : '<span class="w-6"></span>'}
-                        `;
+                        <span class="text-xs font-bold text-slate-500 w-5">${index + 1}</span>
+                        <input type="text" value="${name}" onchange="updatePlayerName(${index}, this.value)" placeholder="Enter name"
+                            class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500">
+                        ${state.players.length > 2 ? `
+                            <button onclick="removePlayerInput(${index})" class="text-slate-500 hover:text-rose-400 px-2 py-1 text-sm">✕</button>
+                        ` : '<span class="w-6"></span>'}
+                    `;
                 container.appendChild(div);
             });
 
@@ -308,18 +357,31 @@
             for (let i = 1; i <= 18; i++) {
                 const checked = DEFAULT_BASE_DOUBLES.includes(i) ? 'checked' : '';
                 grid.innerHTML += `
-                            <label class="cursor-pointer">
-                                <input type="checkbox" value="${i}" ${checked} class="peer hidden double-hole-check">
-                                <div class="w-full py-2 bg-slate-900 border border-slate-800 rounded-lg text-center text-xs font-semibold text-slate-400 peer-checked:bg-emerald-500/20 peer-checked:border-emerald-500 peer-checked:text-emerald-400 hover:border-slate-700">
-                                    ${i}
-                                </div>
-                            </label>
-                        `;
+                        <label class="cursor-pointer">
+                            <input type="checkbox" value="${i}" ${checked} class="peer hidden double-hole-check">
+                            <div class="w-full py-2 bg-slate-900 border border-slate-800 rounded-lg text-center text-xs font-semibold text-slate-400 peer-checked:bg-emerald-500/20 peer-checked:border-emerald-500 peer-checked:text-emerald-400 hover:border-slate-700">
+                                ${i}
+                            </div>
+                        </label>
+                    `;
             }
+        }
+
+        function saveCurrentGameState() {
+            localStorage.setItem('tvpc_golf_active_game', JSON.stringify(state));
         }
 
         function startGame() {
             state.title = document.getElementById('gameTitleInput').value.trim() || "Skins Game";
+
+            // Get selected game mode safely
+            const modeRadios = document.getElementsByName('gameMode');
+            for (let radio of modeRadios) {
+                if (radio.checked) {
+                    state.mode = radio.value;
+                    break;
+                }
+            }
 
             const checks = document.querySelectorAll('.double-hole-check:checked');
             state.baseDoubleHoles = Array.from(checks).map(c => parseInt(c.value));
@@ -340,21 +402,36 @@
             document.getElementById('btnReset').classList.remove('hidden');
             document.getElementById('headerGameTitle').innerText = state.title;
 
+            history.pushState({ inGame: true }, "");
+
+            saveCurrentGameState();
             renderHole();
         }
 
+        // Multiplier Logic (Cumulative vs Double Always)
         function getHoleMultiplier(holeNum) {
-            let mult = state.baseDoubleHoles.includes(holeNum) ? 2 : 1;
-            let prevHole = holeNum - 1;
-            let carryoverScore = 0;
+            let baseVal = state.baseDoubleHoles.includes(holeNum) ? 2 : 1;
 
-            while (prevHole >= 1 && state.ties[prevHole]) {
-                let carry = state.baseDoubleHoles.includes(prevHole) ? 2 : 1;
-                carryoverScore += carry;
-                prevHole--;
+            if (state.mode === 'multiply') {
+                // [Double Always Mode]
+                let prevHole = holeNum - 1;
+                let tieCount = 0;
+                while (prevHole >= 1 && state.ties[prevHole]) {
+                    tieCount++;
+                    prevHole--;
+                }
+                return baseVal * Math.pow(2, tieCount);
+            } else {
+                // [Cumulative Mode]
+                let prevHole = holeNum - 1;
+                let carryoverScore = 0;
+                while (prevHole >= 1 && state.ties[prevHole]) {
+                    const carry = state.baseDoubleHoles.includes(prevHole) ? 2 : 1;
+                    carryoverScore += carry;
+                    prevHole--;
+                }
+                return baseVal + carryoverScore;
             }
-
-            return mult + carryoverScore;
         }
 
         function renderHole() {
@@ -374,8 +451,8 @@
                 banner.className = "mt-2 py-2 px-4 rounded-xl font-black text-lg bg-rose-500/20 text-rose-400 border border-rose-500/40";
                 banner.innerHTML = `🔥🔥 TRIPLE HOLE (3pts per win)`;
             } else {
-                banner.className = "mt-2 py-2 px-4 rounded-xl font-black text-xl bg-purple-500/20 text-purple-300 border border-purple-500/40";
-                banner.innerHTML = `🔥🔥🔥 ${mult}x MULTIPLIER (${mult}pts per win)`;
+                banner.className = "mt-2 py-2 px-4 rounded-xl font-black text-xl bg-rose-600/30 text-rose-300 border border-rose-500/60 animate-pulse";
+                banner.innerHTML = `🚨🚨 ${mult}x MULTIPLIER (${mult}pts per win)`;
             }
 
             const container = document.getElementById('holeScoreInputs');
@@ -386,25 +463,26 @@
                 const isWinner = score > 0;
 
                 container.innerHTML += `
-                            <div class="flex items-center justify-between bg-slate-950 border ${isWinner ? 'border-emerald-500/60 bg-emerald-500/5' : 'border-slate-800'} rounded-xl p-2.5">
-                                <div class="flex items-center gap-2">
-                                    <button onclick="toggleWinner(${pIdx})" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${isWinner ? 'bg-emerald-500 text-slate-950 shadow-md' : 'bg-slate-800 text-slate-400 border border-slate-700 hover:text-white'}">
-                                        🏆 WIN
-                                    </button>
-                                    <span class="font-bold text-white text-sm">${pName}</span>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <button onclick="adjustScore(${pIdx}, -1)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-base font-bold text-slate-300 hover:bg-slate-700">-</button>
-                                    <span class="w-8 text-center text-lg font-black ${score > 0 ? 'text-emerald-400' : 'text-slate-400'}">
-                                        ${score > 0 ? '+' + score : score}
-                                    </span>
-                                    <button onclick="adjustScore(${pIdx}, 1)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-base font-bold text-slate-300 hover:bg-slate-700">+</button>
-                                </div>
+                        <div class="flex items-center justify-between bg-slate-950 border ${isWinner ? 'border-emerald-500/60 bg-emerald-500/5' : 'border-slate-800'} rounded-xl p-2.5">
+                            <div class="flex items-center gap-2">
+                                <button onclick="toggleWinner(${pIdx})" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${isWinner ? 'bg-emerald-500 text-slate-950 shadow-md' : 'bg-slate-800 text-slate-400 border border-slate-700 hover:text-white'}">
+                                    🏆 WIN
+                                </button>
+                                <span class="font-bold text-white text-sm">${pName}</span>
                             </div>
-                        `;
+                            <div class="flex items-center space-x-2">
+                                <button onclick="adjustScore(${pIdx}, -1)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-base font-bold text-slate-300 hover:bg-slate-700">-</button>
+                                <span class="w-8 text-center text-lg font-black ${score > 0 ? 'text-emerald-400' : 'text-slate-400'}">
+                                    ${score > 0 ? '+' + score : score}
+                                </span>
+                                <button onclick="adjustScore(${pIdx}, 1)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-base font-bold text-slate-300 hover:bg-slate-700">+</button>
+                            </div>
+                        </div>
+                    `;
             });
 
             renderLiveTotals();
+            saveCurrentGameState();
         }
 
         function toggleWinner(pIdx) {
@@ -416,7 +494,7 @@
             } else {
                 const currentWinners = state.players.filter((_, idx) => state.scores[h][idx] > 0).length;
                 if (currentWinners >= 2) {
-                    alert("A Maximum of two winners can be selected for each hole");
+                    alert("A maximum of two winners can be selected for each hole.");
                     return;
                 }
                 state.scores[h][pIdx] = mult;
@@ -439,7 +517,7 @@
                 state.scores[h][pIdx] = 0;
             });
             state.ties[h] = true;
-            renderHole();
+
             changeHole(1);
         }
 
@@ -482,15 +560,70 @@
             state.players.forEach((pName, pIdx) => {
                 const tot = totals[pIdx];
                 container.innerHTML += `
-                            <div class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 flex justify-between items-center">
-                                <span class="text-xs font-semibold text-slate-300 truncate">${pName}</span>
-                                <span class="text-sm font-bold ${tot > 0 ? 'text-emerald-400' : 'text-slate-400'}">
-                                    ${tot} pts
-                                </span>
-                            </div>
-                        `;
+                        <div class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 flex justify-between items-center">
+                            <span class="text-xs font-semibold text-slate-300 truncate">${pName}</span>
+                            <span class="text-sm font-bold ${tot > 0 ? 'text-emerald-400' : 'text-slate-400'}">
+                                ${tot} pts
+                            </span>
+                        </div>
+                    `;
             });
         }
+
+        function toggleScoreModal(show) {
+            const modal = document.getElementById('scoreModal');
+            if (show) {
+                renderMatrixTable();
+                modal.classList.remove('hidden');
+                history.pushState({ modalOpen: 'score' }, "");
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function toggleHistoryModal(show) {
+            const modal = document.getElementById('historyModal');
+            if (show) {
+                renderHistoryList();
+                modal.classList.remove('hidden');
+                history.pushState({ modalOpen: 'history' }, "");
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function showSetupScreen() {
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('setupScreen').classList.remove('hidden');
+            document.getElementById('btnViewScore').classList.add('hidden');
+            document.getElementById('btnReset').classList.add('hidden');
+            document.getElementById('headerGameTitle').innerText = "Skins Game";
+        }
+
+        window.addEventListener('popstate', (event) => {
+            const scoreModal = document.getElementById('scoreModal');
+            const historyModal = document.getElementById('historyModal');
+            const gameScreen = document.getElementById('gameScreen');
+
+            if (!scoreModal.classList.contains('hidden')) {
+                scoreModal.classList.add('hidden');
+                return;
+            }
+
+            if (!historyModal.classList.contains('hidden')) {
+                historyModal.classList.add('hidden');
+                return;
+            }
+
+            if (!gameScreen.classList.contains('hidden')) {
+                if (confirm("Are you sure you want to stop the game and return to setup?\n(Your current progress will be saved.)")) {
+                    showSetupScreen();
+                } else {
+                    history.pushState({ inGame: true }, "");
+                }
+            }
+        });
 
         function renderMatrixTable() {
             const { totals } = calculateTotals();
@@ -503,20 +636,20 @@
 
             ranked.forEach((item, rIdx) => {
                 standingsContainer.innerHTML += `
-                            <div class="flex justify-between items-center text-xs">
-                                <span class="text-slate-400"><strong class="text-white">#${rIdx + 1}</strong> ${item.name}</span>
-                                <span class="font-bold ${item.pts > 0 ? 'text-emerald-400' : 'text-slate-400'}">
-                                    ${item.pts} pts
-                                </span>
-                            </div>
-                        `;
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-400"><strong class="text-white">#${rIdx + 1}</strong> ${item.name}</span>
+                            <span class="font-bold ${item.pts > 0 ? 'text-emerald-400' : 'text-slate-400'}">
+                                ${item.pts} pts
+                            </span>
+                        </div>
+                    `;
             });
 
             const headerRow = document.getElementById('matrixHeaderRow');
             headerRow.innerHTML = `
-                        <th class="py-2 px-1">Hole</th>
-                        <th class="py-2 px-1 text-center">Mult</th>
-                    ` + state.players.map(p => `<th class="py-2 px-1 text-right truncate max-w-[60px]">${p}</th>`).join('');
+                    <th class="py-2 px-1">Hole</th>
+                    <th class="py-2 px-1 text-center">Mult</th>
+                ` + state.players.map(p => `<th class="py-2 px-1 text-right truncate max-w-[60px]">${p}</th>`).join('');
 
             const tbody = document.getElementById('matrixTableBody');
             tbody.innerHTML = '';
@@ -530,12 +663,12 @@
                 }).join('');
 
                 tbody.innerHTML += `
-                            <tr class="${state.currentHole === h ? 'bg-emerald-500/10' : ''}">
-                                <td class="py-2 px-1 font-medium text-slate-400">Hole ${h}</td>
-                                <td class="py-2 px-1 text-center font-bold ${mult > 1 ? 'text-amber-400' : 'text-slate-600'}">${mult}x</td>
-                                ${playerCells}
-                            </tr>
-                        `;
+                        <tr class="${state.currentHole === h ? 'bg-emerald-500/10' : ''}">
+                            <td class="py-2 px-1 font-medium text-slate-400">Hole ${h}</td>
+                            <td class="py-2 px-1 text-center font-bold ${mult > 1 ? 'text-amber-400' : 'text-slate-600'}">${mult}x</td>
+                            ${playerCells}
+                        </tr>
+                    `;
             }
         }
 
@@ -557,170 +690,112 @@
             ranked.forEach((item, index) => {
                 const isWinner = index === 0 && item.points > 0;
                 container.innerHTML += `
-                            <div class="bg-slate-900 border ${isWinner ? 'border-amber-500/50 bg-amber-500/5' : 'border-slate-800'} rounded-xl p-4 flex justify-between items-center">
-                                <div class="flex items-center space-x-3">
-                                    <span class="text-lg font-black ${index === 0 ? 'text-amber-400' : 'text-slate-500'}">#${index + 1}</span>
-                                    <h3 class="font-bold text-white text-base">${item.name}</h3>
-                                </div>
-                                <span class="text-2xl font-black ${item.points > 0 ? 'text-emerald-400' : 'text-slate-400'}">
-                                    ${item.points} pts
-                                </span>
+                        <div class="bg-slate-900 border ${isWinner ? 'border-amber-500/50 bg-amber-500/5' : 'border-slate-800'} rounded-xl p-4 flex justify-between items-center">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-lg font-black ${index === 0 ? 'text-amber-400' : 'text-slate-500'}">#${index + 1}</span>
+                                <h3 class="font-bold text-white text-base">${item.name}</h3>
                             </div>
-                        `;
+                            <span class="text-2xl font-black ${item.points > 0 ? 'text-emerald-400' : 'text-slate-400'}">
+                                ${item.points} pts
+                            </span>
+                        </div>
+                    `;
             });
 
-            // Auto Save Match to History
             saveMatchToHistory(ranked);
+            localStorage.removeItem('tvpc_golf_active_game');
         }
 
-        // --- HISTORY FUNCTIONS ---
         function saveMatchToHistory(ranked) {
-            const history = JSON.parse(localStorage.getItem('tvpc_golf_history') || '[]');
+            let historyList = [];
+            try {
+                historyList = JSON.parse(localStorage.getItem('tvpc_golf_history') || '[]');
+            } catch (e) {
+                historyList = [];
+            }
 
             const newRecord = {
                 id: Date.now(),
-                date: new Date().toLocaleString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                date: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
                 title: state.title,
                 standings: ranked
             };
 
-            history.unshift(newRecord); // ordering the latest data to the up position
-            localStorage.setItem('tvpc_golf_history', JSON.stringify(history));
+            historyList.unshift(newRecord);
+            localStorage.setItem('tvpc_golf_history', JSON.stringify(historyList));
         }
 
         function renderHistoryList() {
-            const history = JSON.parse(localStorage.getItem('tvpc_golf_history') || '[]');
+            let historyList = [];
+            try {
+                historyList = JSON.parse(localStorage.getItem('tvpc_golf_history') || '[]');
+            } catch (e) {
+                historyList = [];
+            }
+
             const container = document.getElementById('historyList');
             container.innerHTML = '';
 
-            if (history.length === 0) {
+            if (historyList.length === 0) {
                 container.innerHTML = `
-                            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 text-center text-slate-500 text-sm">
-                                No Saved Hisory.
-                            </div>
-                        `;
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 text-center text-slate-500 text-sm">
+                            No saved match history found.
+                        </div>
+                    `;
                 return;
             }
 
-            history.forEach(item => {
+            historyList.forEach(item => {
                 const winners = item.standings.filter(s => s.points === item.standings[0].points && s.points > 0);
                 const winnerText = winners.length > 0 ? winners.map(w => w.name).join(', ') : 'No Winner';
 
                 const standingsHTML = item.standings.map((s, idx) => `
-                            <div class="flex justify-between items-center text-xs py-0.5">
-                                <span class="text-slate-400">${idx + 1}. ${s.name}</span>
-                                <span class="font-bold ${s.points > 0 ? 'text-emerald-400' : 'text-slate-500'}">${s.points} pts</span>
-                            </div>
-                        `).join('');
+                        <div class="flex justify-between items-center text-xs py-0.5">
+                            <span class="text-slate-400">${idx + 1}. ${s.name}</span>
+                            <span class="font-bold ${s.points > 0 ? 'text-emerald-400' : 'text-slate-500'}">${s.points} pts</span>
+                        </div>
+                    `).join('');
 
                 container.innerHTML += `
-                            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-2">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <h3 class="font-bold text-white text-sm">${item.title}</h3>
-                                        <p class="text-[11px] text-slate-500">${item.date}</p>
-                                    </div>
-                                    <button onclick="deleteHistoryItem(${item.id})" class="text-slate-600 hover:text-rose-400 text-xs px-1.5 py-0.5">✕</button>
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-2">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-white text-sm">${item.title}</h3>
+                                    <p class="text-[11px] text-slate-500">${item.date}</p>
                                 </div>
-                                <div class="text-xs bg-slate-950 p-2 rounded-lg border border-slate-800/80">
-                                    <p class="text-[11px] text-amber-400 font-bold mb-1">🏆 ${winnerText}</p>
-                                    <div class="divide-y divide-slate-800/40">
-                                        ${standingsHTML}
-                                    </div>
+                                <button onclick="deleteHistoryItem(${item.id})" class="text-slate-600 hover:text-rose-400 text-xs px-1.5 py-0.5">✕</button>
+                            </div>
+                            <div class="text-xs bg-slate-950 p-2 rounded-lg border border-slate-800/80">
+                                <p class="text-[11px] text-amber-400 font-bold mb-1">🏆 ${winnerText}</p>
+                                <div class="divide-y divide-slate-800/40">
+                                    ${standingsHTML}
                                 </div>
                             </div>
-                        `;
+                        </div>
+                    `;
             });
         }
 
         function deleteHistoryItem(id) {
-            let history = JSON.parse(localStorage.getItem('tvpc_golf_history') || '[]');
-            history = history.filter(item => item.id !== id);
-            localStorage.setItem('tvpc_golf_history', JSON.stringify(history));
+            let historyList = JSON.parse(localStorage.getItem('tvpc_golf_history') || '[]');
+            historyList = historyList.filter(item => item.id !== id);
+            localStorage.setItem('tvpc_golf_history', JSON.stringify(historyList));
             renderHistoryList();
         }
 
         function clearAllHistory() {
-            if (confirm("Do you want to delete all history?")) {
+            if (confirm("Are you sure you want to delete all match history?")) {
                 localStorage.removeItem('tvpc_golf_history');
                 renderHistoryList();
             }
         }
 
         function confirmReset() {
-            if (confirm("Start a new game? Current match data will be reset.")) {
+            if (confirm("Start a new game? Any active game data will be cleared.")) {
+                localStorage.removeItem('tvpc_golf_active_game');
                 location.reload();
             }
         }
-
-        // ======================================================
-        // Android Back Button / Standalone App Navigation
-        // ======================================================
-        // Keep one history entry for the main screen so the Android
-        // Back button does not immediately close the standalone app.
-        history.replaceState({ page: 'main' }, '', window.location.href);
-
-        function toggleScoreModal(show) {
-            const modal = document.getElementById('scoreModal');
-
-            if (show) {
-                // Do not add another history entry if the modal is already open.
-                if (!modal.classList.contains('hidden')) return;
-
-                renderMatrixTable();
-                modal.classList.remove('hidden');
-                history.pushState({ modalOpen: 'score' }, '', window.location.href);
-            } else {
-                // If this modal was opened by pushState, go back to the main state.
-                if (!modal.classList.contains('hidden') && history.state?.modalOpen === 'score') {
-                    history.back();
-                } else {
-                    modal.classList.add('hidden');
-                }
-            }
-        }
-
-        function toggleHistoryModal(show) {
-            const modal = document.getElementById('historyModal');
-
-            if (show) {
-                // Do not add another history entry if the modal is already open.
-                if (!modal.classList.contains('hidden')) return;
-
-                renderHistoryList();
-                modal.classList.remove('hidden');
-                history.pushState({ modalOpen: 'history' }, '', window.location.href);
-            } else {
-                // If this modal was opened by pushState, go back to the main state.
-                if (!modal.classList.contains('hidden') && history.state?.modalOpen === 'history') {
-                    history.back();
-                } else {
-                    modal.classList.add('hidden');
-                }
-            }
-        }
-
-        // Android hardware Back button / browser Back button.
-        window.addEventListener('popstate', function (event) {
-            const scoreModal = document.getElementById('scoreModal');
-            const historyModal = document.getElementById('historyModal');
-
-            // Back from Score Sheet -> close Score Sheet only.
-            if (!scoreModal.classList.contains('hidden')) {
-                scoreModal.classList.add('hidden');
-                return;
-            }
-
-            // Back from History -> close History only.
-            if (!historyModal.classList.contains('hidden')) {
-                historyModal.classList.add('hidden');
-                return;
-            }
-
-            // Back on the main screen: immediately create a new main entry.
-            // This keeps the standalone app open instead of exiting.
-            history.pushState({ page: 'main' }, '', window.location.href);
-        });
     </script>
 </body>
 </html>
