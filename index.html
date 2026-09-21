@@ -3,21 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TVPC Golf</title>
+    <title>TVPC Golf Skins</title>
 
-    <!-- Manifest.json Connection (PWA Configuration) -->
-    <link rel="manifest" href="manifest.json">
-
-    <!-- Settings for Smartphone App / PWA -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="TVPC Golf">
     <meta name="theme-color" content="#020617">
-
-    <!-- App Icons -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='120' fill='%23020617'/><circle cx='256' cy='256' r='210' fill='%23059669' opacity='0.2'/><path d='M170 380 L170 110 L350 170 L170 230 Z' fill='%2310b981'/><rect x='160' y='100' width='16' height='300' rx='8' fill='%23f8fafc'/><ellipse cx='280' cy='390' rx='70' ry='20' fill='%230f172a'/><circle cx='270' cy='380' r='12' fill='%23ffffff'/></svg>">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='120' fill='%23020617'/><circle cx='256' cy='256' r='210' fill='%23059669' opacity='0.2'/><path d='M170 380 L170 110 L350 170 L170 230 Z' fill='%2310b981'/><rect x='160' y='100' width='16' height='300' rx='8' fill='%23f8fafc'/><ellipse cx='280' cy='390' rx='70' ry='20' fill='%230f172a'/><circle cx='270' cy='380' r='12' fill='%23ffffff'/></svg>">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -42,13 +34,8 @@
 
         @keyframes popIn {
             0% {
-                transform: scale(0.7);
+                transform: scale(0.95);
                 opacity: 0;
-            }
-
-            50% {
-                transform: scale(1.05);
-                opacity: 1;
             }
 
             100% {
@@ -58,7 +45,13 @@
         }
 
         .animate-pop {
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
     </style>
 </head>
@@ -67,150 +60,135 @@
     <div id="app" class="max-w-md mx-auto w-full min-h-screen flex flex-col bg-slate-950 shadow-2xl relative pb-6">
 
         <!-- HEADER -->
-        <header class="p-4 bg-slate-900 border-b border-slate-800 flex justify-between items-center sticky top-0 z-20">
+        <header class="p-3 bg-slate-900 border-b border-slate-800 flex justify-between items-center sticky top-0 z-20">
             <div class="flex items-center space-x-2">
-                <span class="text-2xl">⛳</span>
+                <span class="text-xl">⛳</span>
                 <div>
-                    <h1 class="font-bold text-lg leading-tight text-emerald-400" id="headerGameTitle">Skins Game</h1>
-                    <p class="text-xs text-slate-400" id="headerSub">Golf Points Scorecard</p>
+                    <h1 class="font-bold text-base leading-tight text-emerald-400" id="headerGameTitle">TVPC Golf Skins</h1>
+                    <p class="text-[10px] text-slate-400">Golf Points Scorecard</p>
                 </div>
             </div>
-            <div class="flex gap-2">
-                <button id="btnHistory" onclick="toggleHistoryModal(true)" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 font-semibold">
+            <div class="flex gap-1.5">
+                <button id="btnHistory" onclick="toggleHistoryModal(true)" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg border border-slate-700 font-semibold">
                     📜 History
                 </button>
-                <button id="btnViewScore" onclick="toggleScoreModal(true)" class="hidden text-xs bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 px-3 py-1.5 rounded-lg border border-emerald-500/30 font-semibold">
+                <button id="btnViewScore" onclick="toggleScoreModal(true)" class="hidden text-[11px] bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 px-2.5 py-1 rounded-lg border border-emerald-500/30 font-semibold">
                     📊 Leaderboard
                 </button>
-                <button id="btnReset" onclick="confirmReset()" class="hidden text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">
+                <button id="btnReset" onclick="confirmReset()" class="hidden text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg border border-slate-700">
                     New Game
                 </button>
             </div>
         </header>
 
         <!-- SETUP SCREEN -->
-        <section id="setupScreen" class="p-5 flex-1 flex flex-col justify-between space-y-6">
-            <div class="space-y-6">
-                <!-- RESUME ACTIVE GAME BUTTON -->
-                <div id="resumeGameCard" class="hidden bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 flex justify-between items-center">
+        <section id="setupScreen" class="p-4 flex-1 flex flex-col justify-between space-y-4">
+            <div class="space-y-4">
+                <div id="resumeGameCard" class="hidden bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 flex justify-between items-center">
                     <div>
-                        <h3 class="text-sm font-bold text-emerald-400">In-Progress Game Found</h3>
-                        <p class="text-[11px] text-slate-400" id="resumeGameSub">Tap to continue active round</p>
+                        <h3 class="text-xs font-bold text-emerald-400">In-Progress Game Found</h3>
+                        <p class="text-[10px] text-slate-400" id="resumeGameSub">Tap to continue active round</p>
                     </div>
-                    <button onclick="resumeActiveGame()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-xl shadow-md">
+                    <button onclick="resumeActiveGame()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold px-3 py-1.5 rounded-lg shadow-md">
                         Resume ▶️
                     </button>
                 </div>
 
-                <!-- Game Title Input -->
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-2">Game Title</label>
-                    <input type="text" id="gameTitleInput" value="TVPC Golf Skins" placeholder="Enter Game Title" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 font-medium">
+                    <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1.5">Game Title</label>
+                    <input type="text" id="gameTitleInput" value="TVPC Golf Skins" onfocus="this.select()" placeholder="Enter Game Title" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 font-medium">
                 </div>
 
-                <!-- Players (2 ~ 4) -->
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-2">Players (2 ~ 4)</label>
-                    <div id="playerInputs" class="space-y-2.5">
-                        <!-- Dynamic Player Inputs -->
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="block text-[11px] font-semibold uppercase text-slate-400">Players (2 ~ 4) & Handicaps</label>
                     </div>
-                    <button id="btnAddPlayer" onclick="addPlayerInput()" class="mt-3 w-full py-2.5 border border-dashed border-slate-700 rounded-xl text-slate-400 hover:text-white hover:border-slate-500 text-sm font-medium transition flex items-center justify-center gap-1">
+                    <div id="playerInputs" class="space-y-2"></div>
+                    <button id="btnAddPlayer" onclick="addPlayerInput()" class="mt-2 w-full py-2 border border-dashed border-slate-700 rounded-xl text-slate-400 hover:text-white hover:border-slate-500 text-xs font-medium transition flex items-center justify-center gap-1">
                         <span>+</span> Add Player
                     </button>
                 </div>
 
-                <!-- Carryover Rule Selection (Default: Multiply) -->
-                <div class="bg-slate-900/80 p-3.5 border border-slate-800 rounded-2xl space-y-2">
-                    <label class="block text-xs font-semibold uppercase text-slate-400">Carryover Rule (Tie Option)</label>
+                <div class="bg-slate-900/80 p-3 border border-slate-800 rounded-xl space-y-1.5">
+                    <label class="block text-[11px] font-semibold uppercase text-slate-400">Carryover Rule (Tie Option)</label>
                     <div class="grid grid-cols-2 gap-2">
                         <label class="cursor-pointer block">
                             <input type="radio" name="gameMode" value="add" class="mode-option-input hidden">
-                            <div class="mode-option-card w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-center transition">
-                                <div class="text-xs font-bold mb-1">➕ Cumulative</div>
-                                <div class="text-[10px] text-slate-400 leading-tight">Add previous tied hole points</div>
+                            <div class="mode-option-card w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg text-center transition">
+                                <div class="text-[11px] font-bold mb-0.5">➕ Cumulative</div>
+                                <div class="text-[9px] text-slate-400 leading-tight">Add previous tied hole points</div>
                             </div>
                         </label>
                         <label class="cursor-pointer block">
                             <input type="radio" name="gameMode" value="multiply" checked class="mode-option-input hidden">
-                            <div class="mode-option-card w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-center transition">
-                                <div class="text-xs font-bold mb-1">✖️ Double Always</div>
-                                <div class="text-[10px] text-slate-400 leading-tight">Multiply x2 for each tied hole</div>
+                            <div class="mode-option-card w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg text-center transition">
+                                <div class="text-[11px] font-bold mb-0.5">✖️ Double Always</div>
+                                <div class="text-[9px] text-slate-400 leading-tight">Multiply x2 for each tied hole</div>
                             </div>
                         </label>
                     </div>
                 </div>
 
-                <!-- Base Double Holes -->
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-2">Base Double Holes (🔥 2x)</label>
-                    <div class="grid grid-cols-6 gap-2" id="doubleHolesGrid">
-                        <!-- 1-18 Checkboxes -->
-                    </div>
+                    <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1.5">Base Double Holes (🔥 2x)</label>
+                    <div class="grid grid-cols-6 gap-1.5" id="doubleHolesGrid"></div>
                 </div>
             </div>
 
-            <button onclick="startGame()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-4 rounded-xl shadow-lg shadow-emerald-500/20 text-lg transition">
+            <button onclick="startGame()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-500/20 text-base transition">
                 Start New Game
             </button>
         </section>
 
         <!-- GAMEPLAY SCREEN -->
-        <section id="gameScreen" class="hidden flex-1 flex flex-col p-4 space-y-4">
+        <section id="gameScreen" class="hidden flex-1 flex flex-col p-3 space-y-3">
 
             <!-- Hole Indicator & Status -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-center relative overflow-hidden">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-center relative overflow-hidden">
                 <div class="flex justify-between items-center text-xs text-slate-400 mb-1 font-semibold">
-                    <button onclick="changeHole(-1)" class="px-3 py-1 bg-slate-800 rounded-lg border border-slate-700 hover:text-white">❮ Prev</button>
+                    <button onclick="changeHole(-1)" class="px-2.5 py-1 bg-slate-800 rounded-lg border border-slate-700 hover:text-white">❮ Prev</button>
                     <span id="holeDisplay" class="text-emerald-400 text-sm font-bold">HOLE 1 / 18</span>
-                    <button onclick="changeHole(1)" class="px-3 py-1 bg-slate-800 rounded-lg border border-slate-700 hover:text-white">Next ❯</button>
+                    <button onclick="changeHole(1)" class="px-2.5 py-1 bg-slate-800 rounded-lg border border-slate-700 hover:text-white">Next ❯</button>
                 </div>
-
-                <!-- Multiplier Banner -->
-                <div id="multiplierBanner" class="mt-2 py-2 px-4 rounded-xl font-extrabold text-lg flex items-center justify-center gap-2">
-                    <!-- Dynamic Multiplier Text -->
-                </div>
+                <div id="multiplierBanner" class="mt-1 py-1 px-3 rounded-lg font-extrabold text-xs flex items-center justify-center gap-2"></div>
             </div>
 
             <!-- Hole Score Input Area -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex-1 flex flex-col justify-between">
-                <div>
-                    <!-- Header with Tie Button & Random Draw Stick Button -->
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="text-xs font-semibold text-slate-400 uppercase">Select Winners (Max 2)</span>
-                        <div class="flex gap-1.5">
-                            <button onclick="drawRandomTeams()" class="text-[11px] text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1 active:scale-95">
-                                🎲 Draw Teams
-                            </button>
-                            <button onclick="setTieHole()" class="text-[11px] bg-slate-800 text-slate-300 border border-slate-700 px-2.5 py-1 rounded-lg font-semibold hover:bg-slate-700 active:scale-95 transition">
-                                🤝 Tie
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="holeScoreInputs" class="space-y-2.5">
-                        <!-- Dynamic Score Cards per Player -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase">Scratch Scores & Winners</span>
+                    <div class="flex gap-1.5">
+                        <button onclick="executeTeamDraw()" class="text-[10px] text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 px-2 py-1 rounded-lg font-bold transition flex items-center gap-1 active:scale-95">
+                            🎲 Draw Teams
+                        </button>
+                        <button onclick="setTieHole()" class="text-[10px] bg-slate-800 text-slate-300 border border-slate-700 px-2 py-1 rounded-lg font-semibold hover:bg-slate-700 active:scale-95 transition">
+                            🤝 Tie
+                        </button>
                     </div>
                 </div>
 
-                <div class="mt-4 pt-3 border-t border-slate-800 flex gap-2">
-                    <button onclick="changeHole(1)" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-500/10 text-base transition">
+                <div id="holeScoreInputs" class="space-y-1.5"></div>
+
+                <!-- Inline Team Calculation Result Box -->
+                <div id="inlineTeamResult" class="hidden mt-2 p-2 bg-slate-950 border border-amber-500/30 rounded-xl space-y-1 animate-pop text-xs"></div>
+
+                <div class="mt-3 pt-2 border-t border-slate-800">
+                    <button onclick="changeHole(1)" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl shadow-lg shadow-emerald-500/10 text-sm transition">
                         Confirm & Next Hole ➔
                     </button>
                 </div>
             </div>
 
             <!-- Live Cumulative Total Card -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
-                <h3 class="text-xs font-bold uppercase text-slate-400 mb-3 flex justify-between items-center">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3">
+                <h3 class="text-[11px] font-bold uppercase text-slate-400 mb-2 flex justify-between items-center">
                     <span>📊 Live Total Points</span>
                     <span id="completedHolesCount" class="text-emerald-400">0 / 18 Played</span>
                 </h3>
-                <div id="liveTotalsList" class="grid grid-cols-2 gap-2">
-                    <!-- Dynamic Live Score Items -->
-                </div>
+                <div id="liveTotalsList" class="grid grid-cols-2 gap-2"></div>
             </div>
 
-            <button onclick="toggleScoreModal(true)" class="w-full py-3 text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-xl hover:bg-emerald-500/20">
+            <button onclick="toggleScoreModal(true)" class="w-full py-2 text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-xl hover:bg-emerald-500/20">
                 View Full Score Sheet & Leaderboard 📋
             </button>
         </section>
@@ -230,37 +208,34 @@
         <div id="scoreModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-50 p-4 flex flex-col justify-between overflow-y-auto">
             <div class="space-y-4 max-w-md mx-auto w-full pb-6">
                 <div class="flex justify-between items-center pt-2">
-                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
                         <span>📊</span> Score Sheet & Standings
                     </h2>
-                    <button onclick="toggleScoreModal(false)" class="text-slate-400 hover:text-white text-sm bg-slate-800 border border-slate-700 px-3 py-1 rounded-lg">
+                    <button onclick="toggleScoreModal(false)" class="text-slate-400 hover:text-white text-xs bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-lg">
                         ✕ Close
                     </button>
                 </div>
 
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-3">
-                    <h4 class="text-xs font-bold text-slate-400 uppercase mb-2">Live Ranking</h4>
-                    <div id="modalStandings" class="space-y-1.5">
-                        <!-- Ranking list -->
-                    </div>
+                    <h4 class="text-[11px] font-bold text-slate-400 uppercase mb-2">Live Ranking</h4>
+                    <div id="modalStandings" class="space-y-1.5"></div>
                 </div>
 
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 overflow-x-auto">
-                    <h4 class="text-xs font-bold text-slate-400 uppercase mb-2">18-Hole Matrix Table</h4>
+                    <h4 class="text-[11px] font-bold text-slate-400 uppercase mb-2">18-Hole Matrix Table (Scratch / Skin Points)</h4>
                     <table class="w-full text-xs text-left border-collapse">
                         <thead>
                             <tr class="border-b border-slate-800 text-slate-400" id="matrixHeaderRow">
-                                <th class="py-2 px-1">Hole</th>
-                                <th class="py-2 px-1 text-center">Mult</th>
+                                <th class="py-1.5 px-1">Hole</th>
+                                <th class="py-1.5 px-1 text-center">Mult</th>
                             </tr>
                         </thead>
-                        <tbody id="matrixTableBody" class="divide-y divide-slate-800/50">
-                            <!-- Matrix rows -->
-                        </tbody>
+                        <tbody id="matrixTableBody" class="divide-y divide-slate-800/50"></tbody>
+                        <tfoot id="matrixTableFooter" class="border-t-2 border-slate-700 font-bold text-white"></tfoot>
                     </table>
                 </div>
 
-                <button onclick="toggleScoreModal(false)" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3.5 rounded-xl text-base">
+                <button onclick="toggleScoreModal(false)" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl text-sm">
                     Back to Hole Game ➔
                 </button>
             </div>
@@ -270,23 +245,21 @@
         <div id="historyModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-50 p-4 flex flex-col justify-between overflow-y-auto">
             <div class="space-y-4 max-w-md mx-auto w-full pb-6">
                 <div class="flex justify-between items-center pt-2">
-                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
                         <span>📜</span> Match History
                     </h2>
-                    <button onclick="toggleHistoryModal(false)" class="text-slate-400 hover:text-white text-sm bg-slate-800 border border-slate-700 px-3 py-1 rounded-lg">
+                    <button onclick="toggleHistoryModal(false)" class="text-slate-400 hover:text-white text-xs bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-lg">
                         ✕ Close
                     </button>
                 </div>
 
-                <div id="historyList" class="space-y-3">
-                    <!-- Dynamic History Cards -->
-                </div>
+                <div id="historyList" class="space-y-3"></div>
 
                 <div class="flex gap-2 pt-2">
-                    <button onclick="clearAllHistory()" class="w-1/3 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/30 text-xs font-bold py-3 rounded-xl transition">
+                    <button onclick="clearAllHistory()" class="w-1/3 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/30 text-xs font-bold py-2.5 rounded-xl transition">
                         Clear All
                     </button>
-                    <button onclick="toggleHistoryModal(false)" class="w-2/3 bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl text-sm transition">
+                    <button onclick="toggleHistoryModal(false)" class="w-2/3 bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 rounded-xl text-xs transition">
                         Close
                     </button>
                 </div>
@@ -294,19 +267,17 @@
         </div>
 
         <!-- RESULT SCREEN -->
-        <section id="resultScreen" class="hidden p-5 flex-1 flex flex-col space-y-6">
+        <section id="resultScreen" class="hidden p-4 flex-1 flex flex-col space-y-4">
             <div class="text-center space-y-1">
-                <div class="text-4xl">🏆</div>
-                <h2 class="text-2xl font-black text-white" id="resultGameTitle">Final Standings</h2>
-                <p class="text-xs text-slate-400">Official Game Results</p>
+                <div class="text-3xl">🏆</div>
+                <h2 class="text-xl font-black text-white" id="resultGameTitle">Final Standings</h2>
+                <p class="text-[11px] text-slate-400">Official Game Results</p>
             </div>
 
-            <div id="finalLeaderboard" class="space-y-3">
-                <!-- Dynamic Leaderboard Items -->
-            </div>
+            <div id="finalLeaderboard" class="space-y-2.5"></div>
 
             <div class="pt-2">
-                <button onclick="confirmReset()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3.5 rounded-xl">
+                <button onclick="confirmReset()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl text-sm">
                     Start New Game
                 </button>
             </div>
@@ -315,14 +286,15 @@
     </div>
 
     <script>
-        // State Management
         let state = {
-            title: "TVPC Golf",
+            title: "TVPC Golf Skins",
             players: ["Player 1", "Player 2", "Player 3", "Player 4"],
-            holeSticks: {}, // 매 홀별 할당된 스틱 히스토리
+            handicaps: [0, 0, 0, 0],
+            holeSticks: {},
             mode: "multiply",
             baseDoubleHoles: [17, 18],
             currentHole: 1,
+            scratchScores: Array.from({ length: 19 }, () => [0, 0, 0, 0]),
             scores: {},
             ties: {}
         };
@@ -356,6 +328,8 @@
             if (savedState) {
                 state = JSON.parse(savedState);
                 if (!state.holeSticks) state.holeSticks = {};
+                if (!state.handicaps) state.handicaps = state.players.map(() => 0);
+                if (!state.scratchScores) state.scratchScores = Array.from({ length: 19 }, () => state.players.map(() => 0));
 
                 document.getElementById('setupScreen').classList.add('hidden');
                 document.getElementById('gameScreen').classList.remove('hidden');
@@ -368,50 +342,35 @@
             }
         }
 
-        function drawRandomTeams() {
-            if (state.holeSticks[state.currentHole] && state.holeSticks[state.currentHole].length > 0) {
-                alert("Team draw is already completed for this hole.");
-                return;
-            }
-
-            const stickPool = [
-                { color: 'red', label: 'R', bg: 'bg-rose-500', text: 'text-white' },
-                { color: 'red', label: 'R', bg: 'bg-rose-500', text: 'text-white' },
-                { color: 'green', label: 'G', bg: 'bg-emerald-500', text: 'text-slate-950' },
-                { color: 'green', label: 'G', bg: 'bg-emerald-500', text: 'text-slate-950' },
-                { color: 'joker', label: 'J', bg: 'bg-slate-950 border border-slate-700', text: 'text-yellow-400 font-black' }
-            ];
-
-            for (let i = stickPool.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [stickPool[i], stickPool[j]] = [stickPool[j], stickPool[i]];
-            }
-
-            state.holeSticks[state.currentHole] = state.players.map((_, idx) => stickPool[idx]);
-            renderHole();
-        }
-
         function getStickBadgeHTML(stick) {
             if (!stick) return '';
-            return `<span class="w-6 h-6 rounded-full font-bold text-xs ${stick.bg} ${stick.text} flex items-center justify-center shrink-0 shadow-sm">${stick.label}</span>`;
+            return `<span class="w-5 h-5 rounded-full font-bold text-[10px] ${stick.bg} ${stick.text} flex items-center justify-center shrink-0 shadow-sm">${stick.label}</span>`;
         }
 
         function renderSetupPlayers() {
             const container = document.getElementById('playerInputs');
             container.innerHTML = '';
 
+            if (!state.handicaps) state.handicaps = state.players.map(() => 0);
+
             state.players.forEach((name, index) => {
+                const hcp = state.handicaps[index] !== undefined ? state.handicaps[index] : 0;
                 const div = document.createElement('div');
                 div.className = 'flex items-center gap-2';
                 div.innerHTML = `
-                        <span class="text-xs font-bold text-slate-500 w-4">${index + 1}</span>
-                        <div class="flex-1 flex items-center bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 focus-within:border-emerald-500">
-                            <input type="text" value="${name}" onchange="updatePlayerName(${index}, this.value)" placeholder="Enter name"
-                                class="flex-1 bg-transparent text-white text-sm focus:outline-none font-medium">
+                        <span class="text-[11px] font-bold text-slate-500 w-3">${index + 1}</span>
+                        <div class="flex-1 flex items-center bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 focus-within:border-emerald-500">
+                            <input type="text" value="${name}" onfocus="this.select()" onchange="updatePlayerName(${index}, this.value)" placeholder="Enter name"
+                                class="flex-1 bg-transparent text-white text-xs focus:outline-none font-medium">
+                        </div>
+                        <div class="w-16 flex items-center bg-slate-900 border border-slate-700 rounded-xl px-2 py-1.5 focus-within:border-emerald-500">
+                            <span class="text-[9px] text-slate-500 font-bold mr-1">HCP</span>
+                            <input type="number" value="${hcp}" onfocus="this.select()" onchange="updatePlayerHandicap(${index}, this.value)" placeholder="0"
+                                class="w-full bg-transparent text-white text-xs focus:outline-none font-medium text-center">
                         </div>
                         ${state.players.length > 2 ? `
-                            <button onclick="removePlayerInput(${index})" class="text-slate-500 hover:text-rose-400 px-1 py-1 text-sm">✕</button>
-                        ` : '<span class="w-4"></span>'}
+                            <button onclick="removePlayerInput(${index})" class="text-slate-500 hover:text-rose-400 px-1 py-1 text-xs">✕</button>
+                        ` : '<span class="w-3"></span>'}
                     `;
                 container.appendChild(div);
             });
@@ -423,9 +382,16 @@
             state.players[index] = val.trim() || `Player ${index + 1}`;
         }
 
+        function updatePlayerHandicap(index, val) {
+            if (!state.handicaps) state.handicaps = [];
+            state.handicaps[index] = parseInt(val, 10) || 0;
+        }
+
         function addPlayerInput() {
             if (state.players.length < 4) {
                 state.players.push(`Player ${state.players.length + 1}`);
+                if (!state.handicaps) state.handicaps = [];
+                state.handicaps.push(0);
                 renderSetupPlayers();
             }
         }
@@ -433,6 +399,7 @@
         function removePlayerInput(index) {
             if (state.players.length > 2) {
                 state.players.splice(index, 1);
+                if (state.handicaps) state.handicaps.splice(index, 1);
                 renderSetupPlayers();
             }
         }
@@ -445,7 +412,7 @@
                 grid.innerHTML += `
                         <label class="cursor-pointer">
                             <input type="checkbox" value="${i}" ${checked} class="peer hidden double-hole-check">
-                            <div class="w-full py-2 bg-slate-900 border border-slate-800 rounded-lg text-center text-xs font-semibold text-slate-400 peer-checked:bg-emerald-500/20 peer-checked:border-emerald-500 peer-checked:text-emerald-400 hover:border-slate-700">
+                            <div class="w-full py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-center text-[11px] font-semibold text-slate-400 peer-checked:bg-emerald-500/20 peer-checked:border-emerald-500 peer-checked:text-emerald-400 hover:border-slate-700">
                                 ${i}
                             </div>
                         </label>
@@ -458,15 +425,7 @@
         }
 
         function startGame() {
-            const savedState = localStorage.getItem('tvpc_golf_active_game');
-            if (savedState) {
-                const confirmNew = confirm("An active game is currently in progress. Starting a new game will discard your current progress. Do you want to continue?");
-                if (!confirmNew) {
-                    return;
-                }
-            }
-
-            state.title = document.getElementById('gameTitleInput').value.trim() || "Skins Game";
+            state.title = document.getElementById('gameTitleInput').value.trim() || "TVPC Golf Skins";
 
             const modeRadios = document.getElementsByName('gameMode');
             for (let radio of modeRadios) {
@@ -482,6 +441,8 @@
             state.scores = {};
             state.ties = {};
             state.holeSticks = {};
+            state.scratchScores = Array.from({ length: 19 }, () => state.players.map(() => 0));
+
             for (let h = 1; h <= 18; h++) {
                 state.scores[h] = {};
                 state.players.forEach((_, idx) => state.scores[h][idx] = 0);
@@ -497,7 +458,6 @@
             document.getElementById('headerGameTitle').innerText = state.title;
 
             history.pushState({ inGame: true }, "");
-
             saveCurrentGameState();
             renderHole();
         }
@@ -533,16 +493,13 @@
             const banner = document.getElementById('multiplierBanner');
 
             if (mult === 1) {
-                banner.className = "mt-2 py-2 px-4 rounded-xl font-bold text-sm bg-slate-800 text-slate-300 border border-slate-700";
+                banner.className = "mt-1 py-1 px-3 rounded-lg font-bold text-xs bg-slate-800 text-slate-300 border border-slate-700";
                 banner.innerHTML = `REGULAR HOLE (1pt per win)`;
             } else if (mult === 2) {
-                banner.className = "mt-2 py-2 px-4 rounded-xl font-extrabold text-base bg-amber-500/20 text-amber-400 border border-amber-500/40";
+                banner.className = "mt-1 py-1 px-3 rounded-lg font-extrabold text-xs bg-amber-500/20 text-amber-400 border border-amber-500/40";
                 banner.innerHTML = `🔥 DOUBLE HOLE (2pts per win)`;
-            } else if (mult === 3) {
-                banner.className = "mt-2 py-2 px-4 rounded-xl font-black text-lg bg-rose-500/20 text-rose-400 border border-rose-500/40";
-                banner.innerHTML = `🔥🔥 TRIPLE HOLE (3pts per win)`;
             } else {
-                banner.className = "mt-2 py-2 px-4 rounded-xl font-black text-xl bg-rose-600/30 text-rose-300 border border-rose-500/60 animate-pulse";
+                banner.className = "mt-1 py-1 px-3 rounded-lg font-black text-xs bg-rose-500/20 text-rose-400 border border-rose-500/40";
                 banner.innerHTML = `🚨🚨 ${mult}x MULTIPLIER (${mult}pts per win)`;
             }
 
@@ -550,65 +507,174 @@
             container.innerHTML = '';
 
             const currentHoleSticks = state.holeSticks[h] || [];
+            const hcpList = state.handicaps || state.players.map(() => 0);
 
             state.players.forEach((pName, pIdx) => {
-                const score = state.scores[h][pIdx] || 0;
-                const isWinner = score > 0;
+                const skinScore = state.scores[h][pIdx] || 0;
+                const scratchVal = state.scratchScores[h][pIdx] || '';
+                const isWinner = skinScore > 0;
                 const stick = currentHoleSticks[pIdx];
 
+                const hcp = hcpList[pIdx] || 0;
+                const hasHcpBadge = h <= hcp;
+
                 container.innerHTML += `
-                        <div class="flex items-center justify-between bg-slate-950 border ${isWinner ? 'border-emerald-500/60 bg-emerald-500/5' : 'border-slate-800'} rounded-xl p-2.5">
-                            <div class="flex items-center gap-2">
-                                <button onclick="toggleWinner(${pIdx})" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 ${isWinner ? 'bg-emerald-500 text-slate-950 shadow-md' : 'bg-slate-800 text-slate-400 border border-slate-700 hover:text-white'}">
-                                    🏆 WIN
+                        <div class="flex items-center justify-between bg-slate-950 border ${isWinner ? 'border-emerald-500/60 bg-emerald-500/5' : 'border-slate-800'} rounded-lg px-2.5 py-1">
+                            <div class="flex items-center gap-1.5 truncate">
+                                <button onclick="toggleWinnerManual(${pIdx})" class="px-2 py-0.5 rounded-md text-[10px] font-bold transition flex items-center gap-0.5 ${isWinner ? 'bg-emerald-500 text-slate-950 shadow-sm' : 'bg-slate-800 text-slate-400 border border-slate-700 hover:text-white'}">
+                                    WIN
                                 </button>
                                 ${getStickBadgeHTML(stick)}
-                                <span class="font-bold text-white text-sm">${pName}</span>
+                                <span class="font-bold text-white text-xs truncate max-w-[80px]">${pName}</span>
+                                ${hasHcpBadge ? '<span class="text-[10px] font-extrabold text-rose-400 bg-rose-500/10 px-1 rounded">(-1)</span>' : ''}
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <button onclick="adjustScore(${pIdx}, -1)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-base font-bold text-slate-300 hover:bg-slate-700">-</button>
-                                <span class="w-8 text-center text-lg font-black ${score > 0 ? 'text-emerald-400' : 'text-slate-400'}">
-                                    ${score > 0 ? '+' + score : score}
-                                </span>
-                                <button onclick="adjustScore(${pIdx}, 1)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-base font-bold text-slate-300 hover:bg-slate-700">+</button>
+                            <div class="flex items-center gap-1.5">
+                                <div class="flex items-center bg-slate-900 border border-slate-700 px-2 py-0.5 rounded-md">
+                                    <span class="text-[9px] text-slate-400 mr-1 font-bold">Scratch</span>
+                                    <input type="number" value="${scratchVal}" onfocus="this.select()" onchange="updateScratchScore(${pIdx}, this.value)" placeholder="0"
+                                        class="w-7 bg-transparent text-amber-400 text-xs font-black text-center focus:outline-none">
+                                </div>
+                                <div class="flex items-center bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded-md">
+                                    <span class="text-[9px] text-slate-400 mr-0.5 font-bold">Skin</span>
+                                    <input type="number" value="${skinScore}" onfocus="this.select()" onchange="updateManualSkinScore(${pIdx}, this.value)" placeholder="0"
+                                        class="w-7 bg-transparent text-emerald-400 text-xs font-black text-center focus:outline-none">
+                                </div>
                             </div>
                         </div>
                     `;
             });
 
+            // 이미 팀 드로우 결과나 점수가 기록되어 있는 홀인 경우 결과 박스를 자동으로 보여줌
+            const inlineBox = document.getElementById('inlineTeamResult');
+            const hasScore = state.players.some((_, idx) => (state.scores[h][idx] || 0) > 0);
+            const isTie = state.ties[h];
+            const hasSticks = state.holeSticks[h] && state.holeSticks[h].length > 0;
+
+            if (hasSticks || hasScore || isTie) {
+                updateInlineTeamResultBox(h);
+            } else {
+                inlineBox.classList.add('hidden');
+            }
+
             renderLiveTotals();
             saveCurrentGameState();
         }
 
-        function toggleWinner(pIdx) {
+        function updateInlineTeamResultBox(h) {
+            const currentSticks = state.holeSticks[h] || [];
+            const hcpList = state.handicaps || state.players.map(() => 0);
+            const inlineBox = document.getElementById('inlineTeamResult');
+
+            if (!currentSticks || currentSticks.length === 0) {
+                inlineBox.classList.add('hidden');
+                return;
+            }
+
+            let nonJokerScores = [];
+            state.players.forEach((_, idx) => {
+                if (currentSticks[idx].label !== 'J') {
+                    const rawScore = state.scratchScores[h][idx] || 0;
+                    nonJokerScores.push(rawScore);
+                }
+            });
+            const minScratch = nonJokerScores.length > 0 ? Math.min(...nonJokerScores) : 0;
+
+            let assignedScratch = [];
+            state.players.forEach((_, idx) => {
+                const stick = currentSticks[idx];
+                let rawScore = (stick.label === 'J') ? minScratch : (state.scratchScores[h][idx] || 0);
+                const hcp = hcpList[idx] || 0;
+                const finalScore = h <= hcp ? Math.max(0, rawScore - 1) : rawScore;
+                assignedScratch.push(finalScore);
+            });
+
+            let redCount = 0, greenCount = 0;
+            currentSticks.forEach(st => {
+                if (st.label === 'R') redCount++;
+                if (st.label === 'G') greenCount++;
+            });
+            let jokerJoinColor = (redCount < greenCount) ? 'R' : 'G';
+
+            let redScratchSum = 0, greenScratchSum = 0;
+            let redDetails = [], greenDetails = [];
+
+            state.players.forEach((pName, idx) => {
+                const stick = currentSticks[idx];
+                const rawScore = state.scratchScores[h][idx] || 0;
+                const finalSc = assignedScratch[idx];
+                const hcp = hcpList[idx] || 0;
+                const isHcpApplied = h <= hcp;
+
+                let effectiveTeam = stick.label;
+                if (stick.label === 'J') {
+                    effectiveTeam = jokerJoinColor;
+                }
+
+                let desc = `${pName}(${stick.label === 'J' ? 'J->' + minScratch : rawScore}${isHcpApplied ? ', -1hcp=' + finalSc : ''})`;
+
+                if (effectiveTeam === 'R') {
+                    redScratchSum += finalSc;
+                    redDetails.push(desc);
+                } else if (effectiveTeam === 'G') {
+                    greenScratchSum += finalSc;
+                    greenDetails.push(desc);
+                }
+            });
+
+            const mult = getHoleMultiplier(h);
+            let resultMsg = "";
+            if (state.ties[h]) {
+                resultMsg = `<span class='text-amber-400 font-bold'>🤝 Tie (Carryover)</span>`;
+            } else if (redScratchSum < greenScratchSum) {
+                resultMsg = `<span class='text-emerald-400 font-bold'>🏆 Red Team Wins (+${mult} pts)</span>`;
+            } else if (greenScratchSum < redScratchSum) {
+                resultMsg = `<span class='text-emerald-400 font-bold'>🏆 Green Team Wins (+${mult} pts)</span>`;
+            } else {
+                resultMsg = `<span class='text-amber-400 font-bold'>🤝 Tie (Carryover)</span>`;
+            }
+
+            inlineBox.innerHTML = `
+                    <div class="text-[11px] font-semibold text-rose-400">🔴 Red Team (Total: ${redScratchSum})</div>
+                    <div class="text-[10px] text-slate-400 pl-2">${redDetails.join(' | ') || 'None'}</div>
+                    <div class="text-[11px] font-semibold text-emerald-400 mt-1">🟢 Green Team (Total: ${greenScratchSum})</div>
+                    <div class="text-[10px] text-slate-400 pl-2">${greenDetails.join(' | ') || 'None'}</div>
+                    <div class="pt-1.5 mt-1 border-t border-slate-800 text-center text-xs">
+                        ${resultMsg}
+                    </div>
+                `;
+            inlineBox.classList.remove('hidden');
+        }
+
+        function updateScratchScore(pIdx, val) {
+            if (!state.scratchScores[state.currentHole]) {
+                state.scratchScores[state.currentHole] = state.players.map(() => 0);
+            }
+            state.scratchScores[state.currentHole][pIdx] = parseInt(val, 10) || 0;
+            saveCurrentGameState();
+        }
+
+        function updateManualSkinScore(pIdx, val) {
+            const h = state.currentHole;
+            state.scores[h][pIdx] = parseInt(val, 10) || 0;
+            if (state.scores[h][pIdx] > 0) {
+                state.ties[h] = false;
+            }
+            document.getElementById('inlineTeamResult').classList.add('hidden');
+            renderHole();
+        }
+
+        function toggleWinnerManual(pIdx) {
             const h = state.currentHole;
             const mult = getHoleMultiplier(h);
+
+            document.getElementById('inlineTeamResult').classList.add('hidden');
 
             if (state.scores[h][pIdx] > 0) {
                 state.scores[h][pIdx] = 0;
             } else {
-                const currentWinners = state.players.filter((_, idx) => state.scores[h][idx] > 0).length;
-                if (currentWinners >= 2) {
-                    alert("A maximum of 2 winners can be selected.");
-                    return;
-                }
                 state.scores[h][pIdx] = mult;
             }
 
-            state.ties[h] = false;
-            renderHole();
-
-            const winnerCount = state.players.filter((_, idx) => state.scores[h][idx] > 0).length;
-            if (winnerCount === 2) {
-                setTimeout(() => {
-                    changeHole(1);
-                }, 300);
-            }
-        }
-
-        function adjustScore(pIdx, delta) {
-            const h = state.currentHole;
-            state.scores[h][pIdx] = Math.max(0, (state.scores[h][pIdx] || 0) + delta);
             state.ties[h] = false;
             renderHole();
         }
@@ -619,23 +685,113 @@
                 state.scores[h][pIdx] = 0;
             });
             state.ties[h] = true;
-
+            document.getElementById('inlineTeamResult').classList.add('hidden');
             changeHole(1);
+        }
+
+        function executeTeamDraw() {
+            const h = state.currentHole;
+
+            if (!state.holeSticks[h] || state.holeSticks[h].length === 0) {
+                const stickPool = [
+                    { color: 'red', label: 'R', bg: 'bg-rose-500', text: 'text-white' },
+                    { color: 'red', label: 'R', bg: 'bg-rose-500', text: 'text-white' },
+                    { color: 'green', label: 'G', bg: 'bg-emerald-500', text: 'text-slate-950' },
+                    { color: 'green', label: 'G', bg: 'bg-emerald-500', text: 'text-slate-950' },
+                    { color: 'joker', label: 'J', bg: 'bg-slate-950 border border-slate-700', text: 'text-yellow-400 font-black' }
+                ];
+                for (let i = stickPool.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [stickPool[i], stickPool[j]] = [stickPool[j], stickPool[i]];
+                }
+                state.holeSticks[h] = state.players.map((_, idx) => stickPool[idx]);
+            }
+
+            const currentSticks = state.holeSticks[h];
+            const hcpList = state.handicaps || state.players.map(() => 0);
+
+            let nonJokerScores = [];
+            state.players.forEach((_, idx) => {
+                if (currentSticks[idx].label !== 'J') {
+                    const rawScore = state.scratchScores[h][idx] || 0;
+                    nonJokerScores.push(rawScore);
+                }
+            });
+            const minScratch = nonJokerScores.length > 0 ? Math.min(...nonJokerScores) : 0;
+
+            let assignedScratch = [];
+            state.players.forEach((_, idx) => {
+                const stick = currentSticks[idx];
+                let rawScore = (stick.label === 'J') ? minScratch : (state.scratchScores[h][idx] || 0);
+                const hcp = hcpList[idx] || 0;
+                const finalScore = h <= hcp ? Math.max(0, rawScore - 1) : rawScore;
+                assignedScratch.push(finalScore);
+            });
+
+            let redCount = 0, greenCount = 0;
+            currentSticks.forEach(st => {
+                if (st.label === 'R') redCount++;
+                if (st.label === 'G') greenCount++;
+            });
+            let jokerJoinColor = (redCount < greenCount) ? 'R' : 'G';
+
+            let redScratchSum = 0, greenScratchSum = 0;
+            let redIndices = [], greenIndices = [];
+
+            state.players.forEach((_, idx) => {
+                const stick = currentSticks[idx];
+                const finalSc = assignedScratch[idx];
+
+                let effectiveTeam = stick.label;
+                if (stick.label === 'J') {
+                    effectiveTeam = jokerJoinColor;
+                }
+
+                if (effectiveTeam === 'R') {
+                    redScratchSum += finalSc;
+                    redIndices.push(idx);
+                } else if (effectiveTeam === 'G') {
+                    greenScratchSum += finalSc;
+                    greenIndices.push(idx);
+                }
+            });
+
+            let calculatedWinners = [];
+            const mult = getHoleMultiplier(h);
+
+            if (redScratchSum < greenScratchSum) {
+                calculatedWinners = redIndices;
+            } else if (greenScratchSum < redScratchSum) {
+                calculatedWinners = greenIndices;
+            }
+
+            state.players.forEach((_, pIdx) => {
+                state.scores[h][pIdx] = 0;
+            });
+
+            if (calculatedWinners.length > 0) {
+                calculatedWinners.forEach(idx => {
+                    state.scores[h][idx] = mult;
+                });
+                state.ties[h] = false;
+            } else {
+                state.ties[h] = true;
+            }
+
+            updateInlineTeamResultBox(h);
+            renderHole();
         }
 
         function changeHole(dir) {
             const h = state.currentHole;
 
-            // 다음 홀로 전진할 때 점수 미입력 검증
             if (dir > 0) {
                 const hasScore = state.players.some((_, idx) => (state.scores[h][idx] || 0) > 0);
                 const isTie = state.ties[h];
 
                 if (!hasScore && !isTie) {
                     const confirmMove = confirm("No score entered for this hole. Move to next hole?");
-                    if (!confirmMove) {
-                        return; // Cancel 클릭 시 이동 안 함
-                    }
+                    if (!confirmMove) return;
                 }
             }
 
@@ -660,7 +816,6 @@
             holeText.innerText = `HOLE ${targetHole}`;
             if (mult === 1) multText.innerText = "REGULAR HOLE (1pt)";
             else if (mult === 2) multText.innerText = "🔥 DOUBLE HOLE (2pts)";
-            else if (mult === 3) multText.innerText = "🔥🔥 TRIPLE HOLE (3pts)";
             else multText.innerText = `🚨🚨 ${mult}x MULTIPLIER (${mult}pts)`;
 
             overlay.classList.remove('hidden');
@@ -668,26 +823,27 @@
             setTimeout(() => {
                 overlay.classList.add('hidden');
                 if (callback) callback();
-            }, 750);
+            }, 500);
         }
 
         function calculateTotals() {
             const totals = state.players.map(() => 0);
+            const scratchTotals = state.players.map(() => 0);
             let playedCount = 0;
 
             for (let h = 1; h <= 18; h++) {
                 let holeHasScore = false;
-
                 state.players.forEach((_, pIdx) => {
                     const pts = state.scores[h][pIdx] || 0;
                     if (pts > 0) holeHasScore = true;
                     totals[pIdx] += pts;
-                });
 
+                    const sc = (state.scratchScores && state.scratchScores[h]) ? (state.scratchScores[h][pIdx] || 0) : 0;
+                    scratchTotals[pIdx] += sc;
+                });
                 if (holeHasScore || state.ties[h]) playedCount++;
             }
-
-            return { totals, playedCount };
+            return { totals, scratchTotals, playedCount };
         }
 
         function renderLiveTotals() {
@@ -696,7 +852,6 @@
 
             const container = document.getElementById('liveTotalsList');
             container.innerHTML = '';
-
             const currentHoleSticks = state.holeSticks[state.currentHole] || [];
 
             state.players.forEach((pName, pIdx) => {
@@ -704,12 +859,12 @@
                 const stick = currentHoleSticks[pIdx];
 
                 container.innerHTML += `
-                        <div class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 flex justify-between items-center">
+                        <div class="bg-slate-950 border border-slate-800 rounded-lg p-2 flex justify-between items-center">
                             <div class="flex items-center gap-1.5 truncate">
                                 ${getStickBadgeHTML(stick)}
                                 <span class="text-xs font-semibold text-slate-300 truncate">${pName}</span>
                             </div>
-                            <span class="text-sm font-bold ${tot > 0 ? 'text-emerald-400' : 'text-slate-400'}">
+                            <span class="text-xs font-bold ${tot > 0 ? 'text-emerald-400' : 'text-slate-400'}">
                                 ${tot} pts
                             </span>
                         </div>
@@ -746,11 +901,11 @@
             document.getElementById('setupScreen').classList.remove('hidden');
             document.getElementById('btnViewScore').classList.add('hidden');
             document.getElementById('btnReset').classList.add('hidden');
-            document.getElementById('headerGameTitle').innerText = "Skins Game";
+            document.getElementById('headerGameTitle').innerText = "TVPC Golf Skins";
             checkActiveGameExists();
         }
 
-        window.addEventListener('popstate', (event) => {
+        window.addEventListener('popstate', () => {
             const scoreModal = document.getElementById('scoreModal');
             const historyModal = document.getElementById('historyModal');
             const gameScreen = document.getElementById('gameScreen');
@@ -759,14 +914,12 @@
                 scoreModal.classList.add('hidden');
                 return;
             }
-
             if (!historyModal.classList.contains('hidden')) {
                 historyModal.classList.add('hidden');
                 return;
             }
-
             if (!gameScreen.classList.contains('hidden')) {
-                if (confirm("Are you sure you want to stop the game and return to setup?\n(Your current progress will be saved.)")) {
+                if (confirm("Are you sure you want to stop the game and return to setup?")) {
                     showSetupScreen();
                 } else {
                     history.pushState({ inGame: true }, "");
@@ -775,8 +928,7 @@
         });
 
         function renderMatrixTable() {
-            const { totals } = calculateTotals();
-
+            const { totals, scratchTotals } = calculateTotals();
             const standingsContainer = document.getElementById('modalStandings');
             standingsContainer.innerHTML = '';
 
@@ -787,18 +939,16 @@
                 standingsContainer.innerHTML += `
                         <div class="flex justify-between items-center text-xs">
                             <span class="text-slate-400"><strong class="text-white">#${rIdx + 1}</strong> ${item.name}</span>
-                            <span class="font-bold ${item.pts > 0 ? 'text-emerald-400' : 'text-slate-400'}">
-                                ${item.pts} pts
-                            </span>
+                            <span class="font-bold ${item.pts > 0 ? 'text-emerald-400' : 'text-slate-400'}">${item.pts} pts</span>
                         </div>
                     `;
             });
 
             const headerRow = document.getElementById('matrixHeaderRow');
             headerRow.innerHTML = `
-                    <th class="py-2 px-1">Hole</th>
-                    <th class="py-2 px-1 text-center">Mult</th>
-                ` + state.players.map(p => `<th class="py-2 px-1 text-right truncate max-w-[60px]">${p}</th>`).join('');
+                    <th class="py-1.5 px-1">Hole</th>
+                    <th class="py-1.5 px-1 text-center">Mult</th>
+                ` + state.players.map(p => `<th class="py-1.5 px-1 text-right truncate max-w-[50px]">${p}</th>`).join('');
 
             const tbody = document.getElementById('matrixTableBody');
             tbody.innerHTML = '';
@@ -806,19 +956,45 @@
             for (let h = 1; h <= 18; h++) {
                 const mult = getHoleMultiplier(h);
                 const playerCells = state.players.map((_, pIdx) => {
-                    const pts = state.scores[h][pIdx] || 0;
-                    const color = pts > 0 ? 'text-emerald-400 font-bold' : 'text-slate-600';
-                    return `<td class="py-2 px-1 text-right font-mono ${color}">${pts > 0 ? '+' + pts : pts}</td>`;
+                    const skinPts = state.scores[h][pIdx] || 0;
+                    const scratchVal = (state.scratchScores && state.scratchScores[h]) ? (state.scratchScores[h][pIdx] || 0) : 0;
+                    const skinColor = skinPts > 0 ? 'text-emerald-400 font-bold' : 'text-slate-500';
+                    return `
+                            <td class="py-1.5 px-1 text-right font-mono">
+                                <span class="text-amber-400/90 text-[10px] mr-1">[${scratchVal}]</span>
+                                <span class="${skinColor}">${skinPts > 0 ? '+' + skinPts : skinPts}</span>
+                            </td>
+                        `;
                 }).join('');
 
                 tbody.innerHTML += `
                         <tr class="${state.currentHole === h ? 'bg-emerald-500/10' : ''}">
-                            <td class="py-2 px-1 font-medium text-slate-400">Hole ${h}</td>
-                            <td class="py-2 px-1 text-center font-bold ${mult > 1 ? 'text-amber-400' : 'text-slate-600'}">${mult}x</td>
+                            <td class="py-1.5 px-1 font-medium text-slate-400">Hole ${h}</td>
+                            <td class="py-1.5 px-1 text-center font-bold ${mult > 1 ? 'text-amber-400' : 'text-slate-600'}">${mult}x</td>
                             ${playerCells}
                         </tr>
                     `;
             }
+
+            // Hole 18 아래 스크래치 총합 및 스킨 총점 풋터 표시
+            const tfoot = document.getElementById('matrixTableFooter');
+            const scratchTotalCells = state.players.map((_, pIdx) => {
+                return `<td class="py-2 px-1 text-right font-mono text-amber-400">${scratchTotals[pIdx]}</td>`;
+            }).join('');
+            const skinTotalCells = state.players.map((_, pIdx) => {
+                return `<td class="py-2 px-1 text-right font-mono text-emerald-400">${totals[pIdx]} pts</td>`;
+            }).join('');
+
+            tfoot.innerHTML = `
+                    <tr>
+                        <td class="py-2 px-1 text-slate-300" colspan="2">Scratch Total</td>
+                        ${scratchTotalCells}
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-1 text-slate-300" colspan="2">Skin Points Total</td>
+                        ${skinTotalCells}
+                    </tr>
+                `;
         }
 
         function showResults() {
@@ -827,11 +1003,7 @@
             document.getElementById('resultGameTitle').innerText = state.title;
 
             const { totals } = calculateTotals();
-
-            const ranked = state.players.map((name, idx) => ({
-                name,
-                points: totals[idx]
-            })).sort((a, b) => b.points - a.points);
+            const ranked = state.players.map((name, idx) => ({ name, points: totals[idx] })).sort((a, b) => b.points - a.points);
 
             const container = document.getElementById('finalLeaderboard');
             container.innerHTML = '';
@@ -839,12 +1011,12 @@
             ranked.forEach((item, index) => {
                 const isWinner = index === 0 && item.points > 0;
                 container.innerHTML += `
-                        <div class="bg-slate-900 border ${isWinner ? 'border-amber-500/50 bg-amber-500/5' : 'border-slate-800'} rounded-xl p-4 flex justify-between items-center">
-                            <div class="flex items-center space-x-3">
-                                <span class="text-lg font-black ${index === 0 ? 'text-amber-400' : 'text-slate-500'}">#${index + 1}</span>
-                                <h3 class="font-bold text-white text-base">${item.name}</h3>
+                        <div class="bg-slate-900 border ${isWinner ? 'border-amber-500/50 bg-amber-500/5' : 'border-slate-800'} rounded-xl p-3 flex justify-between items-center">
+                            <div class="flex items-center space-x-2.5">
+                                <span class="text-base font-black ${index === 0 ? 'text-amber-400' : 'text-slate-500'}">#${index + 1}</span>
+                                <h3 class="font-bold text-white text-sm">${item.name}</h3>
                             </div>
-                            <span class="text-2xl font-black ${item.points > 0 ? 'text-emerald-400' : 'text-slate-400'}">
+                            <span class="text-xl font-black ${item.points > 0 ? 'text-emerald-400' : 'text-slate-400'}">
                                 ${item.points} pts
                             </span>
                         </div>
@@ -886,39 +1058,32 @@
             container.innerHTML = '';
 
             if (historyList.length === 0) {
-                container.innerHTML = `
-                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 text-center text-slate-500 text-sm">
-                            No saved match history found.
-                        </div>
-                    `;
+                container.innerHTML = `<div class="bg-slate-900 border border-slate-800 rounded-xl p-5 text-center text-slate-500 text-xs">No saved match history found.</div>`;
                 return;
             }
 
             historyList.forEach(item => {
                 const winners = item.standings.filter(s => s.points === item.standings[0].points && s.points > 0);
                 const winnerText = winners.length > 0 ? winners.map(w => w.name).join(', ') : 'No Winner';
-
                 const standingsHTML = item.standings.map((s, idx) => `
-                        <div class="flex justify-between items-center text-xs py-0.5">
+                        <div class="flex justify-between items-center text-[11px] py-0.5">
                             <span class="text-slate-400">${idx + 1}. ${s.name}</span>
                             <span class="font-bold ${s.points > 0 ? 'text-emerald-400' : 'text-slate-500'}">${s.points} pts</span>
                         </div>
                     `).join('');
 
                 container.innerHTML += `
-                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 space-y-2">
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-1.5">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <h3 class="font-bold text-white text-sm">${item.title}</h3>
-                                    <p class="text-[11px] text-slate-500">${item.date}</p>
+                                    <h3 class="font-bold text-white text-xs">${item.title}</h3>
+                                    <p class="text-[10px] text-slate-500">${item.date}</p>
                                 </div>
-                                <button onclick="deleteHistoryItem(${item.id})" class="text-slate-600 hover:text-rose-400 text-xs px-1.5 py-0.5">✕</button>
+                                <button onclick="deleteHistoryItem(${item.id})" class="text-slate-600 hover:text-rose-400 text-xs px-1 py-0.5">✕</button>
                             </div>
                             <div class="text-xs bg-slate-950 p-2 rounded-lg border border-slate-800/80">
-                                <p class="text-[11px] text-amber-400 font-bold mb-1">🏆 ${winnerText}</p>
-                                <div class="divide-y divide-slate-800/40">
-                                    ${standingsHTML}
-                                </div>
+                                <p class="text-[10px] text-amber-400 font-bold mb-1">🏆 ${winnerText}</p>
+                                <div class="divide-y divide-slate-800/40">${standingsHTML}</div>
                             </div>
                         </div>
                     `;
