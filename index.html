@@ -544,7 +544,6 @@
                     `;
             });
 
-            // 이미 팀 드로우 결과나 점수가 기록되어 있는 홀인 경우 결과 박스를 자동으로 보여줌
             const inlineBox = document.getElementById('inlineTeamResult');
             const hasScore = state.players.some((_, idx) => (state.scores[h][idx] || 0) > 0);
             const isTie = state.ties[h];
@@ -691,6 +690,18 @@
 
         function executeTeamDraw() {
             const h = state.currentHole;
+
+            // 참여자 모두에게 1 이상의 스크래치 스코어가 입력되었는지 검사
+            const currentScratch = state.scratchScores[h] || [];
+            const allEntered = state.players.every((_, idx) => {
+                const sc = currentScratch[idx];
+                return sc !== undefined && sc !== null && sc !== "" && parseInt(sc, 10) > 0;
+            });
+
+            if (!allEntered) {
+                alert("Please enter a valid scratch score (1 or greater) for all players before drawing teams.");
+                return;
+            }
 
             if (!state.holeSticks[h] || state.holeSticks[h].length === 0) {
                 const stickPool = [
@@ -976,7 +987,6 @@
                     `;
             }
 
-            // Hole 18 아래 스크래치 총합 및 스킨 총점 풋터 표시
             const tfoot = document.getElementById('matrixTableFooter');
             const scratchTotalCells = state.players.map((_, pIdx) => {
                 return `<td class="py-2 px-1 text-right font-mono text-amber-400">${scratchTotals[pIdx]}</td>`;
