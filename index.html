@@ -219,9 +219,13 @@
         </div>
 
         <!-- COURSE FINDER MODAL -->
-        <div id="courseModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-50 p-4 flex flex-col justify-between overflow-y-auto">
-            <div class="space-y-4 max-w-md mx-auto w-full pb-6">
-                <div class="flex justify-between items-center pt-2">
+        <!-- COURSE FINDER MODAL -->
+        <div id="courseModal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-50 p-4 flex flex-col justify-center items-center">
+            <!-- 모달 메인 컨테이너: 최대 높이를 화면의 85vh로 제한하고 flex 구조 적용 -->
+            <div class="space-y-4 max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col max-h-[85vh] shadow-2xl">
+
+                <!-- 1. 헤더 (고정) -->
+                <div class="flex justify-between items-center pb-1 flex-none">
                     <h2 class="text-base font-bold text-white flex items-center gap-2">
                         <span>⛳</span> Select Golf Course & Tee
                     </h2>
@@ -230,54 +234,63 @@
                     </button>
                 </div>
 
-                <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-3">
-                    <div class="flex gap-2">
-                        <input type="text" id="courseSearchInput" placeholder="Enter course name (e.g. Pebble Beach)" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-                        <button onclick="searchGolfCourses()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3 py-2 rounded-xl text-xs font-bold">Search</button>
-                    </div>
-
-                    <div class="flex items-center justify-between bg-slate-950 border border-slate-800 rounded-xl px-3 py-2">
-                        <span class="text-[11px] font-semibold text-slate-400">Search Radius (Mile)</span>
-                        <select id="searchRadiusSelect" class="bg-slate-900 text-white text-xs border border-slate-700 rounded-lg px-2 py-1 focus:outline-none focus:border-emerald-500">
-                            <option value="5" selected>5 Mile</option>
-                            <option value="10">10 Mile</option>
-                            <option value="15">15 Mile</option>
-                            <option value="20">20 Mile</option>
-                            <option value="50">50 Mile</option>
-                        </select>
-                    </div>
-
-                    <button onclick="searchNearbyCourses()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-xs font-semibold text-emerald-400">
-                        📍 Use My GPS Location (Nearby)
-                    </button>
-                    <div id="courseSearchResults" class="space-y-2 max-h-48 overflow-y-auto"></div>
-                </div>
-
-                <!-- Tee Box 정보 및 상세 미리보기 테이블 -->
-                <div id="teeSelectContainer" class="hidden bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-3">
-                    <h3 id="selectedCourseTitle" class="text-xs font-bold text-emerald-400"></h3>
-                    <div>
-                        <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">Select Tee Box</label>
-                        <select id="teeSelectDropdown" onchange="renderTeePreview()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"></select>
-                    </div>
-
-                    <!-- 선택한 Tee Box의 상세 데이터 미리보기 영역 -->
-                    <div id="teePreviewBox" class="bg-slate-950 border border-slate-800 rounded-lg p-2.5 space-y-2 text-xs">
-                        <div class="flex justify-between items-center text-[11px] text-slate-400 font-bold border-b border-slate-800 pb-1">
-                            <span>TEE DETAILS</span>
-                            <span id="previewRatingInfo" class="text-amber-400">Rating: - / Slope: -</span>
+                <!-- 2. 스크롤 가능 영역 (검색 입력창 + 결과 목록 + Tee Box 컨테이너) -->
+                <div class="flex-1 overflow-y-auto space-y-3 pr-1">
+                    <!-- 검색 및 GPS 영역 -->
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-3">
+                        <div class="flex gap-2">
+                            <input type="text" id="courseSearchInput" placeholder="Enter course name (e.g. Pebble Beach)" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                            <button onclick="searchGolfCourses()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3 py-2 rounded-xl text-xs font-bold">Search</button>
                         </div>
-                        <div id="previewHoleTable" class="overflow-x-auto"></div>
+
+                        <div class="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-xl px-3 py-2">
+                            <span class="text-[11px] font-semibold text-slate-400">Search Radius (Mile)</span>
+                            <select id="searchRadiusSelect" class="bg-slate-950 text-white text-xs border border-slate-700 rounded-lg px-2 py-1 focus:outline-none focus:border-emerald-500">
+                                <option value="5" selected>5 Mile</option>
+                                <option value="10">10 Mile</option>
+                                <option value="15">15 Mile</option>
+                                <option value="20">20 Mile</option>
+                            </select>
+                        </div>
+
+                        <button onclick="searchNearbyCourses()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-xs font-semibold text-emerald-400">
+                            📍 Use My GPS Location (Nearby)
+                        </button>
+
+                        <!-- 검색 결과 리스트 (pb-4 추가로 하단 잘림 완전 방지) -->
+                        <div id="courseSearchResults" class="space-y-2 pb-4"></div>
                     </div>
 
-                    <button onclick="applySelectedCourse()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs shadow-lg shadow-emerald-500/20">
-                        Apply Course & Tee Data ➔
+                    <!-- Tee Box 정보 및 상세 미리보기 테이블 -->
+                    <div id="teeSelectContainer" class="hidden bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-3">
+                        <h3 id="selectedCourseTitle" class="text-xs font-bold text-emerald-400"></h3>
+                        <div>
+                            <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1">Select Tee Box</label>
+                            <select id="teeSelectDropdown" onchange="renderTeePreview()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"></select>
+                        </div>
+
+                        <!-- 선택한 Tee Box의 상세 데이터 미리보기 영역 -->
+                        <div id="teePreviewBox" class="bg-slate-900 border border-slate-800 rounded-lg p-2.5 space-y-2 text-xs">
+                            <div class="flex justify-between items-center text-[11px] text-slate-400 font-bold border-b border-slate-800 pb-1">
+                                <span>TEE DETAILS</span>
+                                <span id="previewRatingInfo" class="text-amber-400">Rating: - / Slope: -</span>
+                            </div>
+                            <div id="previewHoleTable" class="overflow-x-auto"></div>
+                        </div>
+
+                        <button onclick="applySelectedCourse()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs shadow-lg shadow-emerald-500/20">
+                            Apply Course & Tee Data ➔
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. 하단 Cancel 버튼 (고정) -->
+                <div class="pt-2 flex-none">
+                    <button onclick="closeCourseModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl text-xs">
+                        Cancel / Skip
                     </button>
                 </div>
 
-                <button onclick="closeCourseModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl text-xs">
-                    Cancel / Skip
-                </button>
             </div>
         </div>
 
@@ -628,7 +641,7 @@
 
             document.getElementById('headerCourseSub').innerText = fullCourseText;
             document.getElementById('setupCourseText').innerText = fullCourseText;
-            document.getElementById('gameTitleInput').value = state.courseName;
+            //document.getElementById('gameTitleInput').value = state.courseName;
 
             alert(`✅ Course Data Applied!\n\nCourse: ${state.courseName}\nTee: ${teeName}\n18-Hole Par & HCP Data Ready.`);
 
@@ -776,7 +789,7 @@
         }
 
         function startGame() {
-            state.title = document.getElementById('gameTitleInput').value.trim() || "TVPC Golf Skins";
+            //state.title = document.getElementById('gameTitleInput').value.trim() || "TVPC Golf Skins";
 
             const modeRadios = document.getElementsByName('gameMode');
             for (let radio of modeRadios) {
@@ -924,14 +937,9 @@
                 return;
             }
 
-            let nonJokerScores = [];
-            state.players.forEach((_, idx) => {
-                if (currentSticks[idx].label !== 'J') {
-                    const rawScore = state.scratchScores[h][idx] || 0;
-                    nonJokerScores.push(rawScore);
-                }
-            });
-            const minScratch = nonJokerScores.length > 0 ? Math.min(...nonJokerScores) : 0;
+            // get a lowest score among all players
+            let allScore = state.players.map((_, idx) => state.scratchScores[h][idx] || 0);
+            const minScratch = Math.min(...allScore);
 
             let assignedScratch = [];
             state.players.forEach((_, idx) => {
@@ -1072,14 +1080,9 @@
 
             const currentSticks = state.holeSticks[h];
 
-            let nonJokerScores = [];
-            state.players.forEach((_, idx) => {
-                if (currentSticks[idx].label !== 'J') {
-                    const rawScore = state.scratchScores[h][idx] || 0;
-                    nonJokerScores.push(rawScore);
-                }
-            });
-            const minScratch = nonJokerScores.length > 0 ? Math.min(...nonJokerScores) : 0;
+            // get a lowest score among all players for Joker
+            let allScore = state.players.map((_, idx) => state.scratchScores[h][idx] || 0);
+            const minScratch = Math.min(...allScore);
 
             let assignedScratch = [];
             state.players.forEach((_, idx) => {
@@ -1338,9 +1341,15 @@
                     const scratchVal = (state.scratchScores && state.scratchScores[h]) ? (state.scratchScores[h][pIdx] || 0) : 0;
                     const skinColor = skinPts > 0 ? 'text-emerald-400 font-bold' : 'text-slate-500';
                     return `
-                                <td class="py-1.5 px-1 text-right font-mono pr-1 text-xs">
-                                    <span class="text-amber-400/90 text-[11px] mr-1">[${scratchVal}]</span>
-                                    <span class="${skinColor}">${skinPts > 0 ? '+' + skinPts : skinPts}</span>
+                                <td class="py-1 px-0.5 text-center font-mono align-middle">
+                                    <div class="flex flex-col items-center justify-center leading-tight">                                    
+                                    <span class="text-amber-400 font-extrabold text-[11px]">[${scratchVal}]</span>
+                                                    
+                                    ${skinPts > 0
+                                                ? `<span class="text-emerald-400 font-black text-[10px]">+${skinPts}</span>`
+                                                : `<span class="opacity-0 font-black text-[10px] pointer-events-none">+0</span>`
+                                    }
+                                 </div>
                                 </td>
                             `;
                 }).join('');
