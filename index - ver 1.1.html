@@ -295,16 +295,15 @@
 
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-3">
                     <h4 class="text-[11px] font-bold text-slate-400 uppercase mb-2">Live Ranking</h4>
-                    <div id="modalStandings" class="grid grid-cols-2 gap-2 text-xs"></div>
+                    <div id="modalStandings" class="space-y-1.5"></div>
                 </div>
 
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 overflow-x-auto">
                     <h4 class="text-[11px] font-bold text-slate-400 uppercase mb-2">18-Hole Matrix Table</h4>
-                    <table class="w-full text-xs text-left border-collapse min-w-[340px]">
+                    <table class="w-full text-xs text-left border-collapse">
                         <thead>
                             <tr class="border-b border-slate-800 text-slate-400" id="matrixHeaderRow">
                                 <th class="py-1.5 px-1">Hole</th>
-                                <th class="py-1.5 px-1 text-center">Par/HDCP</th>
                                 <th class="py-1.5 px-1 text-center">Mult</th>
                             </tr>
                         </thead>
@@ -425,6 +424,7 @@
                 const data = await res.json();
                 let courses = data.courses || data.data || [];
 
+                // US 제한 필터링
                 courses = courses.filter(c => !c.country_iso || c.country_iso === 'US');
 
                 if (courses.length === 0) {
@@ -450,12 +450,12 @@
                     const btn = document.createElement('button');
                     btn.className = 'w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-lg text-xs transition';
                     btn.innerHTML = `
-                                <div class="flex justify-between items-center">
-                                    <span class="font-bold text-white">${course.course_name || course.name}</span>
-                                    ${distText}
-                                </div>
-                                <div class="text-[10px] text-slate-400">${course.city || ''} ${course.state || ''}</div>
-                            `;
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-white">${course.course_name || course.name}</span>
+                                ${distText}
+                            </div>
+                            <div class="text-[10px] text-slate-400">${course.city || ''} ${course.state || ''}</div>
+                        `;
                     btn.onclick = () => loadCourseDetails(course.id || course.course_id);
                     container.appendChild(btn);
                 });
@@ -481,6 +481,7 @@
                     const data = await res.json();
                     let courses = data.courses || data.data || [];
 
+                    // 1. US 제한 및 2. 선택한 Radius 이내 필터링
                     courses = courses.filter(c => (!c.country_iso || c.country_iso === 'US'));
                     courses = courses.filter(c => {
                         const cLat = c.latitude || c.lat;
@@ -507,12 +508,12 @@
                         const btn = document.createElement('button');
                         btn.className = 'w-full text-left p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-lg text-xs transition';
                         btn.innerHTML = `
-                                    <div class="flex justify-between items-center">
-                                        <span class="font-bold text-white">${course.course_name || course.name}</span>
-                                        ${distText}
-                                    </div>
-                                    <div class="text-[10px] text-slate-400">${course.city || ''} ${course.state || ''}</div>
-                                `;
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold text-white">${course.course_name || course.name}</span>
+                                    ${distText}
+                                </div>
+                                <div class="text-[10px] text-slate-400">${course.city || ''} ${course.state || ''}</div>
+                            `;
                         btn.onclick = () => loadCourseDetails(course.id || course.course_id);
                         container.appendChild(btn);
                     });
@@ -527,6 +528,7 @@
 
         async function loadCourseDetails(courseId) {
             try {
+                // 상세 정보와 홀 데이터를 동시에 조회
                 const [resDetail, resHoles] = await Promise.all([
                     fetch(`https://api.opengolfapi.org/api/v1/courses/${courseId}`),
                     fetch(`https://api.opengolfapi.org/api/v1/courses/${courseId}/holes`)
@@ -542,6 +544,7 @@
                 const select = document.getElementById('teeSelectDropdown');
                 select.innerHTML = '';
 
+                // Tee 목록 추출
                 const tees = activeCourseData.tees || activeCourseData.tee_sets || [];
                 if (tees.length === 0) {
                     const opt = document.createElement('option');
@@ -560,12 +563,13 @@
                 }
 
                 document.getElementById('teeSelectContainer').classList.remove('hidden');
-                renderTeePreview();
+                renderTeePreview(); // 하단 미리보기 테이블 출력
             } catch (e) {
                 alert("Failed to load tee and scorecard details.");
             }
         }
 
+        // 선택된 Tee Box의 상세 데이터 미리보기 렌더링
         function renderTeePreview() {
             if (!activeCourseData) return;
             const teeIndex = document.getElementById('teeSelectDropdown').value;
@@ -600,6 +604,7 @@
             holeTable.innerHTML = `<table class="w-full text-left"><thead>${trHoles}</thead><tbody>${trPar}${trHcp}</tbody></table>`;
         }
 
+        // Apply 버튼 클릭 시 실제 데이터 바인딩
         function applySelectedCourse() {
             if (!activeCourseData) return;
             const teeIndex = document.getElementById('teeSelectDropdown').value;
@@ -626,12 +631,14 @@
 
             const fullCourseText = `${state.courseName} (${teeName})`;
 
+            // 헤더 및 설정 화면 UI 변경
             document.getElementById('headerCourseSub').innerText = fullCourseText;
             document.getElementById('setupCourseText').innerText = fullCourseText;
             document.getElementById('gameTitleInput').value = state.courseName;
 
             alert(`✅ Course Data Applied!\n\nCourse: ${state.courseName}\nTee: ${teeName}\n18-Hole Par & HCP Data Ready.`);
 
+            // 모달 초기화 및 닫기
             closeCourseModal();
             document.getElementById('teeSelectContainer').classList.add('hidden');
             document.getElementById('courseSearchResults').innerHTML = '';
@@ -709,20 +716,20 @@
                 const div = document.createElement('div');
                 div.className = 'flex items-center gap-2';
                 div.innerHTML = `
-                            <span class="text-[11px] font-bold text-slate-500 w-3">${index + 1}</span>
-                            <div class="flex-1 flex items-center bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 focus-within:border-emerald-500">
-                                <input type="text" value="${name}" onfocus="this.select()" onchange="updatePlayerName(${index}, this.value)" placeholder="Enter name"
-                                    class="flex-1 bg-transparent text-white text-xs focus:outline-none font-medium">
-                            </div>
-                            <div class="w-16 flex items-center bg-slate-900 border border-slate-700 rounded-xl px-2 py-1.5 focus-within:border-emerald-500">
-                                <span class="text-[9px] text-slate-500 font-bold mr-1">HCP</span>
-                                <input type="number" value="${hcp}" onfocus="this.select()" onchange="updatePlayerHandicap(${index}, this.value)" placeholder="0"
-                                    class="w-full bg-transparent text-white text-xs focus:outline-none font-medium text-center">
-                            </div>
-                            ${state.players.length > 2 ? `
-                                <button onclick="removePlayerInput(${index})" class="text-slate-500 hover:text-rose-400 px-1 py-1 text-xs">✕</button>
-                            ` : '<span class="w-3"></span>'}
-                        `;
+                        <span class="text-[11px] font-bold text-slate-500 w-3">${index + 1}</span>
+                        <div class="flex-1 flex items-center bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 focus-within:border-emerald-500">
+                            <input type="text" value="${name}" onfocus="this.select()" onchange="updatePlayerName(${index}, this.value)" placeholder="Enter name"
+                                class="flex-1 bg-transparent text-white text-xs focus:outline-none font-medium">
+                        </div>
+                        <div class="w-16 flex items-center bg-slate-900 border border-slate-700 rounded-xl px-2 py-1.5 focus-within:border-emerald-500">
+                            <span class="text-[9px] text-slate-500 font-bold mr-1">HCP</span>
+                            <input type="number" value="${hcp}" onfocus="this.select()" onchange="updatePlayerHandicap(${index}, this.value)" placeholder="0"
+                                class="w-full bg-transparent text-white text-xs focus:outline-none font-medium text-center">
+                        </div>
+                        ${state.players.length > 2 ? `
+                            <button onclick="removePlayerInput(${index})" class="text-slate-500 hover:text-rose-400 px-1 py-1 text-xs">✕</button>
+                        ` : '<span class="w-3"></span>'}
+                    `;
                 container.appendChild(div);
             });
 
@@ -761,13 +768,13 @@
             for (let i = 1; i <= 18; i++) {
                 const checked = DEFAULT_BASE_DOUBLES.includes(i) ? 'checked' : '';
                 grid.innerHTML += `
-                            <label class="cursor-pointer">
-                                <input type="checkbox" value="${i}" ${checked} class="peer hidden double-hole-check">
-                                <div class="w-full py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-center text-[11px] font-semibold text-slate-400 peer-checked:bg-emerald-500/20 peer-checked:border-emerald-500 peer-checked:text-emerald-400 hover:border-slate-700">
-                                    ${i}
-                                </div>
-                            </label>
-                        `;
+                        <label class="cursor-pointer">
+                            <input type="checkbox" value="${i}" ${checked} class="peer hidden double-hole-check">
+                            <div class="w-full py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-center text-[11px] font-semibold text-slate-400 peer-checked:bg-emerald-500/20 peer-checked:border-emerald-500 peer-checked:text-emerald-400 hover:border-slate-700">
+                                ${i}
+                            </div>
+                        </label>
+                    `;
             }
         }
 
@@ -875,29 +882,29 @@
                 const hasHcpBadge = bonus > 0;
 
                 container.innerHTML += `
-                            <div class="flex items-center justify-between bg-slate-950 border ${isWinner ? 'border-emerald-500/60 bg-emerald-500/5' : 'border-slate-800'} rounded-lg px-2.5 py-1">
-                                <div class="flex items-center gap-1.5 truncate">
-                                    <button onclick="toggleWinnerManual(${pIdx})" class="px-2 py-0.5 rounded-md text-[10px] font-bold transition flex items-center gap-0.5 ${isWinner ? 'bg-emerald-500 text-slate-950 shadow-sm' : 'bg-slate-800 text-slate-400 border border-slate-700 hover:text-white'}">
-                                        WIN
-                                    </button>
-                                    ${getStickBadgeHTML(stick)}
-                                    <span class="font-bold text-white text-xs truncate max-w-[80px]">${pName}</span>
-                                    ${hasHcpBadge ? '<span class="text-[10px] font-extrabold text-rose-400 bg-rose-500/10 px-1 rounded">(-1)</span>' : ''}
+                        <div class="flex items-center justify-between bg-slate-950 border ${isWinner ? 'border-emerald-500/60 bg-emerald-500/5' : 'border-slate-800'} rounded-lg px-2.5 py-1">
+                            <div class="flex items-center gap-1.5 truncate">
+                                <button onclick="toggleWinnerManual(${pIdx})" class="px-2 py-0.5 rounded-md text-[10px] font-bold transition flex items-center gap-0.5 ${isWinner ? 'bg-emerald-500 text-slate-950 shadow-sm' : 'bg-slate-800 text-slate-400 border border-slate-700 hover:text-white'}">
+                                    WIN
+                                </button>
+                                ${getStickBadgeHTML(stick)}
+                                <span class="font-bold text-white text-xs truncate max-w-[80px]">${pName}</span>
+                                ${hasHcpBadge ? '<span class="text-[10px] font-extrabold text-rose-400 bg-rose-500/10 px-1 rounded">(-1)</span>' : ''}
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <div class="flex items-center bg-slate-900 border border-slate-700 px-2 py-0.5 rounded-md">
+                                    <span class="text-[9px] text-slate-400 mr-1 font-bold">Scratch</span>
+                                    <input type="number" value="${scratchVal}" onfocus="this.select()" onchange="updateScratchScore(${pIdx}, this.value)" placeholder="0"
+                                        class="w-7 bg-transparent text-amber-400 text-xs font-black text-center focus:outline-none">
                                 </div>
-                                <div class="flex items-center gap-1.5">
-                                    <div class="flex items-center bg-slate-900 border border-slate-700 px-2 py-0.5 rounded-md">
-                                        <span class="text-[9px] text-slate-400 mr-1 font-bold">Scratch</span>
-                                        <input type="number" value="${scratchVal}" onfocus="this.select()" onchange="updateScratchScore(${pIdx}, this.value)" placeholder="0"
-                                            class="w-7 bg-transparent text-amber-400 text-xs font-black text-center focus:outline-none">
-                                    </div>
-                                    <div class="flex items-center bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded-md">
-                                        <span class="text-[9px] text-slate-400 mr-0.5 font-bold">Skin</span>
-                                        <input type="number" value="${skinScore}" onfocus="this.select()" onchange="updateManualSkinScore(${pIdx}, this.value)" placeholder="0"
-                                            class="w-7 bg-transparent text-emerald-400 text-xs font-black text-center focus:outline-none">
-                                    </div>
+                                <div class="flex items-center bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded-md">
+                                    <span class="text-[9px] text-slate-400 mr-0.5 font-bold">Skin</span>
+                                    <input type="number" value="${skinScore}" onfocus="this.select()" onchange="updateManualSkinScore(${pIdx}, this.value)" placeholder="0"
+                                        class="w-7 bg-transparent text-emerald-400 text-xs font-black text-center focus:outline-none">
                                 </div>
                             </div>
-                        `;
+                        </div>
+                    `;
             });
 
             const inlineBox = document.getElementById('inlineTeamResult');
@@ -987,14 +994,14 @@
             }
 
             inlineBox.innerHTML = `
-                        <div class="text-[11px] font-semibold text-rose-400">🔴 Red Team (Total: ${redScratchSum})</div>
-                        <div class="text-[10px] text-slate-400 pl-2">${redDetails.join(' | ') || 'None'}</div>
-                        <div class="text-[11px] font-semibold text-emerald-400 mt-1">🟢 Green Team (Total: ${greenScratchSum})</div>
-                        <div class="text-[10px] text-slate-400 pl-2">${greenDetails.join(' | ') || 'None'}</div>
-                        <div class="pt-1.5 mt-1 border-t border-slate-800 text-center text-xs">
-                            ${resultMsg}
-                        </div>
-                    `;
+                    <div class="text-[11px] font-semibold text-rose-400">🔴 Red Team (Total: ${redScratchSum})</div>
+                    <div class="text-[10px] text-slate-400 pl-2">${redDetails.join(' | ') || 'None'}</div>
+                    <div class="text-[11px] font-semibold text-emerald-400 mt-1">🟢 Green Team (Total: ${greenScratchSum})</div>
+                    <div class="text-[10px] text-slate-400 pl-2">${greenDetails.join(' | ') || 'None'}</div>
+                    <div class="pt-1.5 mt-1 border-t border-slate-800 text-center text-xs">
+                        ${resultMsg}
+                    </div>
+                `;
             inlineBox.classList.remove('hidden');
         }
 
@@ -1225,16 +1232,16 @@
                 const stick = currentHoleSticks[pIdx];
 
                 container.innerHTML += `
-                            <div class="bg-slate-950 border border-slate-800 rounded-lg p-2 flex justify-between items-center">
-                                <div class="flex items-center gap-1.5 truncate">
-                                    ${getStickBadgeHTML(stick)}
-                                    <span class="text-xs font-semibold text-slate-300 truncate">${pName}</span>
-                                </div>
-                                <span class="text-xs font-bold ${tot > 0 ? 'text-emerald-400' : 'text-slate-400'}">
-                                    ${tot} pts
-                                </span>
+                        <div class="bg-slate-950 border border-slate-800 rounded-lg p-2 flex justify-between items-center">
+                            <div class="flex items-center gap-1.5 truncate">
+                                ${getStickBadgeHTML(stick)}
+                                <span class="text-xs font-semibold text-slate-300 truncate">${pName}</span>
                             </div>
-                        `;
+                            <span class="text-xs font-bold ${tot > 0 ? 'text-emerald-400' : 'text-slate-400'}">
+                                ${tot} pts
+                            </span>
+                        </div>
+                    `;
             });
         }
 
@@ -1301,7 +1308,6 @@
             }
         });
 
-        /* === 수 정 된 매 트 릭 스 테 이 블 렌 더 링 === */
         function renderMatrixTable() {
             const { totals, scratchTotals } = calculateTotals();
             const standingsContainer = document.getElementById('modalStandings');
@@ -1312,71 +1318,63 @@
 
             ranked.forEach((item, rIdx) => {
                 standingsContainer.innerHTML += `
-                            <div class="flex justify-between items-center bg-slate-800/30 border border-slate-800/40 px-2.5 py-1.5 rounded-lg text-xs">
-                                <span class="text-slate-300 truncate font-semibold"><strong class="text-slate-500 mr-1">#${rIdx + 1}</strong>${item.name}</span>
-                                <span class="font-bold ${item.pts > 0 ? 'text-emerald-400' : 'text-slate-400'}">${item.pts} pts</span>
-                            </div>
-                        `;
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-400"><strong class="text-white">#${rIdx + 1}</strong> ${item.name}</span>
+                            <span class="font-bold ${item.pts > 0 ? 'text-emerald-400' : 'text-slate-400'}">${item.pts} pts</span>
+                        </div>
+                    `;
             });
 
             const headerRow = document.getElementById('matrixHeaderRow');
             headerRow.innerHTML = `
-                        <th class="py-1.5 px-1 font-medium w-10 text-center">Hole</th>
-                        <th class="py-1.5 px-1 font-medium text-center">Par/HDCP</th>
-                        <th class="py-1.5 px-1 font-medium text-center">Mult</th>
-                    ` + state.players.map(p => `<th class="py-1.5 px-1 font-medium text-right truncate max-w-[60px] pr-1">${p}</th>`).join('');
+                    <th class="py-1.5 px-1">Hole</th>
+                    <th class="py-1.5 px-1 text-center">Mult</th>
+                ` + state.players.map(p => `<th class="py-1.5 px-1 text-right truncate max-w-[50px]">${p}</th>`).join('');
 
             const tbody = document.getElementById('matrixTableBody');
             tbody.innerHTML = '';
 
             for (let h = 1; h <= 18; h++) {
                 const mult = getHoleMultiplier(h);
-                const holeInfo = state.courseHoles && state.courseHoles[h] ? state.courseHoles[h] : { par: 4, handicapIndex: h };
-
                 const playerCells = state.players.map((_, pIdx) => {
                     const skinPts = state.scores[h][pIdx] || 0;
                     const scratchVal = (state.scratchScores && state.scratchScores[h]) ? (state.scratchScores[h][pIdx] || 0) : 0;
                     const skinColor = skinPts > 0 ? 'text-emerald-400 font-bold' : 'text-slate-500';
                     return `
-                                <td class="py-1.5 px-1 text-right font-mono pr-1 text-xs">
-                                    <span class="text-amber-400/90 text-[11px] mr-1">[${scratchVal}]</span>
-                                    <span class="${skinColor}">${skinPts > 0 ? '+' + skinPts : skinPts}</span>
-                                </td>
-                            `;
+                            <td class="py-1.5 px-1 text-right font-mono">
+                                <span class="text-amber-400/90 text-[10px] mr-1">[${scratchVal}]</span>
+                                <span class="${skinColor}">${skinPts > 0 ? '+' + skinPts : skinPts}</span>
+                            </td>
+                        `;
                 }).join('');
 
                 tbody.innerHTML += `
-                            <tr class="${state.currentHole === h ? 'bg-emerald-500/10' : 'hover:bg-slate-800/20'} transition-colors">
-                                <td class="py-1.5 px-1 font-medium text-slate-300 text-center">H${h}</td>
-                                <td class="py-1.5 px-1 text-center text-slate-400 font-mono text-[10px]">
-                                    <span class="text-slate-200">P${holeInfo.par}</span>
-                                    <span class="text-slate-600 mx-0.5">/</span>
-                                    <span class="text-slate-400">${holeInfo.handicapIndex}</span>
-                                </td>
-                                <td class="py-1.5 px-1 text-center font-bold ${mult > 1 ? 'text-amber-400' : 'text-slate-600'}">${mult}x</td>
-                                ${playerCells}
-                            </tr>
-                        `;
+                        <tr class="${state.currentHole === h ? 'bg-emerald-500/10' : ''}">
+                            <td class="py-1.5 px-1 font-medium text-slate-400">Hole ${h}</td>
+                            <td class="py-1.5 px-1 text-center font-bold ${mult > 1 ? 'text-amber-400' : 'text-slate-600'}">${mult}x</td>
+                            ${playerCells}
+                        </tr>
+                    `;
             }
 
             const tfoot = document.getElementById('matrixTableFooter');
             const scratchTotalCells = state.players.map((_, pIdx) => {
-                return `<td class="py-2 px-1 text-right font-mono text-amber-400 pr-1">${scratchTotals[pIdx]}</td>`;
+                return `<td class="py-2 px-1 text-right font-mono text-amber-400">${scratchTotals[pIdx]}</td>`;
             }).join('');
             const skinTotalCells = state.players.map((_, pIdx) => {
-                return `<td class="py-2 px-1 text-right font-mono text-emerald-400 pr-1">${totals[pIdx]} pts</td>`;
+                return `<td class="py-2 px-1 text-right font-mono text-emerald-400">${totals[pIdx]} pts</td>`;
             }).join('');
 
             tfoot.innerHTML = `
-                        <tr>
-                            <td class="py-2 px-1 text-slate-300 font-bold" colspan="3">Scratch Total</td>
-                            ${scratchTotalCells}
-                        </tr>
-                        <tr>
-                            <td class="py-2 px-1 text-slate-300 font-bold" colspan="3">Skin Points Total</td>
-                            ${skinTotalCells}
-                        </tr>
-                    `;
+                    <tr>
+                        <td class="py-2 px-1 text-slate-300" colspan="2">Scratch Total</td>
+                        ${scratchTotalCells}
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-1 text-slate-300" colspan="2">Skin Points Total</td>
+                        ${skinTotalCells}
+                    </tr>
+                `;
         }
 
         function showResults() {
@@ -1393,16 +1391,16 @@
             ranked.forEach((item, index) => {
                 const isWinner = index === 0 && item.points > 0;
                 container.innerHTML += `
-                            <div class="bg-slate-900 border ${isWinner ? 'border-amber-500/50 bg-amber-500/5' : 'border-slate-800'} rounded-xl p-3 flex justify-between items-center">
-                                <div class="flex items-center space-x-2.5">
-                                    <span class="text-base font-black ${index === 0 ? 'text-amber-400' : 'text-slate-500'}">#${index + 1}</span>
-                                    <h3 class="font-bold text-white text-sm">${item.name}</h3>
-                                </div>
-                                <span class="text-xl font-black ${item.points > 0 ? 'text-emerald-400' : 'text-slate-400'}">
-                                    ${item.points} pts
-                                </span>
+                        <div class="bg-slate-900 border ${isWinner ? 'border-amber-500/50 bg-amber-500/5' : 'border-slate-800'} rounded-xl p-3 flex justify-between items-center">
+                            <div class="flex items-center space-x-2.5">
+                                <span class="text-base font-black ${index === 0 ? 'text-amber-400' : 'text-slate-500'}">#${index + 1}</span>
+                                <h3 class="font-bold text-white text-sm">${item.name}</h3>
                             </div>
-                        `;
+                            <span class="text-xl font-black ${item.points > 0 ? 'text-emerald-400' : 'text-slate-400'}">
+                                ${item.points} pts
+                            </span>
+                        </div>
+                    `;
             });
 
             saveMatchToHistory(ranked);
@@ -1448,27 +1446,27 @@
                 const winners = item.standings.filter(s => s.points === item.standings[0].points && s.points > 0);
                 const winnerText = winners.length > 0 ? winners.map(w => w.name).join(', ') : 'No Winner';
                 const standingsHTML = item.standings.map((s, idx) => `
-                            <div class="flex justify-between items-center text-[11px] py-0.5">
-                                <span class="text-slate-400">${idx + 1}. ${s.name}</span>
-                                <span class="font-bold ${s.points > 0 ? 'text-emerald-400' : 'text-slate-500'}">${s.points} pts</span>
-                            </div>
-                        `).join('');
+                        <div class="flex justify-between items-center text-[11px] py-0.5">
+                            <span class="text-slate-400">${idx + 1}. ${s.name}</span>
+                            <span class="font-bold ${s.points > 0 ? 'text-emerald-400' : 'text-slate-500'}">${s.points} pts</span>
+                        </div>
+                    `).join('');
 
                 container.innerHTML += `
-                            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-1.5">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <h3 class="font-bold text-white text-xs">${item.title}</h3>
-                                        <p class="text-[10px] text-slate-500">${item.date}</p>
-                                    </div>
-                                    <button onclick="deleteHistoryItem(${item.id})" class="text-slate-600 hover:text-rose-400 text-xs px-1 py-0.5">✕</button>
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-1.5">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-white text-xs">${item.title}</h3>
+                                    <p class="text-[10px] text-slate-500">${item.date}</p>
                                 </div>
-                                <div class="text-xs bg-slate-950 p-2 rounded-lg border border-slate-800/80">
-                                    <p class="text-[10px] text-amber-400 font-bold mb-1">🏆 ${winnerText}</p>
-                                    <div class="divide-y divide-slate-800/40">${standingsHTML}</div>
-                                </div>
+                                <button onclick="deleteHistoryItem(${item.id})" class="text-slate-600 hover:text-rose-400 text-xs px-1 py-0.5">✕</button>
                             </div>
-                        `;
+                            <div class="text-xs bg-slate-950 p-2 rounded-lg border border-slate-800/80">
+                                <p class="text-[10px] text-amber-400 font-bold mb-1">🏆 ${winnerText}</p>
+                                <div class="divide-y divide-slate-800/40">${standingsHTML}</div>
+                            </div>
+                        </div>
+                    `;
             });
         }
 
