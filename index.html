@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TVPC Golf Skins</title>
+    <title>TVPC Golf Sticks</title>
 
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -64,7 +64,7 @@
             <div class="flex items-center space-x-2">
                 <span class="text-xl">⛳</span>
                 <div>
-                    <h1 class="font-bold text-base leading-tight text-emerald-400" id="headerGameTitle">TVPC Golf Skins</h1>
+                    <h1 class="font-bold text-base leading-tight text-emerald-400" id="headerGameTitle">TVPC Golf Sticks</h1>
                     <p class="text-[10px] text-slate-400" id="headerCourseSub">No course selected</p>
                 </div>
             </div>
@@ -110,7 +110,7 @@
 
                 <div>
                     <label class="block text-[11px] font-semibold uppercase text-slate-400 mb-1.5">Game Title</label>
-                    <input type="text" id="gameTitleInput" value="TVPC Golf Skins" onfocus="this.select()" placeholder="Enter Game Title" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 font-medium">
+                    <input type="text" id="gameTitleInput" value="TVPC Golf Sticks" onfocus="this.select()" placeholder="Enter Game Title" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 font-medium">
                 </div>
 
                 <div>
@@ -374,7 +374,7 @@
 
     <script>
         let state = {
-            title: "TVPC Golf Skins",
+            title: "TVPC Golf Sticks",
             courseName: "",
             courseHoles: {},
             players: ["Player 1", "Player 2", "Player 3", "Player 4"],
@@ -1267,7 +1267,7 @@
             document.getElementById('btnOpenCourse').classList.remove('hidden');
             document.getElementById('btnViewScore').classList.add('hidden');
             document.getElementById('btnReset').classList.add('hidden');
-            document.getElementById('headerGameTitle').innerText = "TVPC Golf Skins";
+            document.getElementById('headerGameTitle').innerText = "TVPC Golf Sticks";
             document.getElementById('headerCourseSub').innerText = "No course selected";
             document.getElementById('setupCourseText').innerText = state.courseName ? `${state.courseName}` : "No course selected (Tap ⛳ Course above)";
             checkActiveGameExists();
